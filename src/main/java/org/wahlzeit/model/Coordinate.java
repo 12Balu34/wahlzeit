@@ -1,5 +1,10 @@
 package org.wahlzeit.model;
 
+/**
+ * Class representing a three dimensional Cartesian coordinate.
+ *
+ * @author 12Balu34
+ */
 public class Coordinate {
 
     private double x;
@@ -13,6 +18,11 @@ public class Coordinate {
         this.z = z;
     }
 
+    /**
+     * Compares this with the coordinate passed to the method.
+     * @param coordinate
+     * @return true if all attributes are equal and other coordinate is not null
+     */
     public boolean isEqual(Coordinate coordinate) {
 
         if (coordinate == null) {
@@ -22,12 +32,25 @@ public class Coordinate {
 
     }
 
+    /**
+     * Delegates the equals method to isEqual () if the Object
+     * passed is of Class Coordinate.
+     * @param obj
+     * @return true if obj is of class Coordinate and all attributes are equal.
+     */
     @Override
     public boolean equals(Object obj) {
+
         return ((obj instanceof Coordinate) && (isEqual((Coordinate) obj)));
     }
 
 
+    /**
+     * Calculates the Euclidian between this and the
+     * coordinate passed to the method.
+     * @param coordinate
+     * @return direct distance between two coordinates
+     */
     public double getDistance(Coordinate coordinate) {
 
         return Math.sqrt(
