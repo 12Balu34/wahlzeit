@@ -32,6 +32,7 @@ import org.wahlzeit.services.EmailAddress;
 import org.wahlzeit.services.Language;
 import org.wahlzeit.services.ObjectManager;
 
+
 import java.util.Map;
 
 /**
@@ -121,6 +122,9 @@ public class Photo extends DataObject {
 	 * The default type is jpg
 	 */
 	protected String ending = "jpg";
+
+
+    public Location location;
 	
 	/**
 	 *
@@ -418,4 +422,14 @@ public class Photo extends DataObject {
 		noVotesAtLastNotification = noVotes;
 		incWriteCount();
 	}
+
+    public Location getLocation() {
+
+        return this.location;
+    }
+
+    public void setLocation(Location location) {
+
+        this.location = location;
+    }
 }
