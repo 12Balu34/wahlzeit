@@ -20,6 +20,7 @@
 
 package org.wahlzeit.model;
 
+
 /**
  * Class representing a three dimensional Cartesian coordinate.
  *
@@ -27,6 +28,7 @@ package org.wahlzeit.model;
  */
 public class Coordinate {
 
+    private static final double DELTA = 1e-6;
     private double x;
     private double y;
     private double z;
@@ -38,8 +40,53 @@ public class Coordinate {
         this.z = z;
     }
 
+
+    /**
+     * @return x value of the current coordinate
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the new x value of the current coordinate
+     */
+    public void setX(double x) {
+        this.x = x;
+    }
+
+
+    /**
+     * @return y value of the current coordinate
+     */
+    public double getY() {
+        return y;
+    }
+
+    /**
+     * @param y the new y value of the current coordinate
+     */
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    /**
+     * @return z value of the current coordinate
+     */
+    public double getZ() {
+        return z;
+    }
+
+    /**
+     * @param z the new z value of the current coordinate
+     */
+    public void setZ(double z) {
+        this.z = z;
+    }
+
     /**
      * Compares this with the coordinate passed to the method.
+     *
      * @param coordinate
      * @return true if all attributes are equal and other coordinate is not null
      */
@@ -48,26 +95,35 @@ public class Coordinate {
         if (coordinate == null) {
             return false;
         }
-        return (this.x == coordinate.x) && (this.y == coordinate.y) && (this.z == coordinate.z);
-
+        return ((Math.abs(this.getX() - coordinate.getX()) < DELTA)
+                && (Math.abs(this.getY() - coordinate.getY()) < DELTA)
+                && (Math.abs(this.getZ() - coordinate.getZ()) < DELTA));
     }
 
-    /**
-     * Delegates the equals method to isEqual () if the Object
-     * passed is of Class Coordinate.
-     * @param obj
-     * @return true if obj is of class Coordinate and all attributes are equal.
-     */
+
     @Override
     public boolean equals(Object obj) {
 
         return ((obj instanceof Coordinate) && (isEqual((Coordinate) obj)));
     }
 
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 
     /**
-     * Calculates the Euclidian between this and the
+     * Calculates the Euclidian distance between this and the
      * coordinate passed to the method.
+     *
      * @param coordinate
      * @return direct distance between two coordinates
      */
