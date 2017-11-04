@@ -34,15 +34,17 @@ public class Location {
     }
 
     /**
-     * Delegates the equals method to the equals method of the Coordinate class
-     * if the Object passed is of Class Location.
-     * @param obj
-     * @return true if obj is of class Location and all attributes are equal.
+     * @return current coordinate
      */
-    @Override
-    public boolean equals(Object obj) {
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
 
-        return (obj instanceof Location && this.coordinate.equals(((Location) obj).coordinate));
+    /**
+     * @param coordinate instance of Coordinate to be set
+     */
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 }
 
