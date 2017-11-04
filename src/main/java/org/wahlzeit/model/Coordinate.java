@@ -100,7 +100,12 @@ public class Coordinate {
                 && (Math.abs(this.getZ() - coordinate.getZ()) < DELTA));
     }
 
-
+    /**
+     * Delegates the equals method to isEqual () if the Object
+     * passed is of Class Coordinate.
+     * @param obj
+     * @return true if obj is of class Coordinate and all attributes are equal.
+     */
     @Override
     public boolean equals(Object obj) {
 
