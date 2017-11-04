@@ -1,1 +1,8 @@
 language: java
+deploy:
+  provider: gae
+  keyfile: gaeKey.json
+  project: bastianscherber-wahlzeit
+before_install:
+- openssl aes-256-cbc -K $encrypted_7b726c8922ae_key -iv $encrypted_7b726c8922ae_iv
+  -in gaeKey.json.enc -out gaeKey.json -d
