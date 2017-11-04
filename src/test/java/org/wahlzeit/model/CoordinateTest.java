@@ -20,7 +20,7 @@ public class CoordinateTest {
     private Coordinate coord7;
 
     @Before
-    public void initializeCoordinateObjects() {
+    public void setUp() {
 
         nullObject = null;
         nullCoord = null;
