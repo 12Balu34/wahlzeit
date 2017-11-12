@@ -65,6 +65,7 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 *
 	 */
+	//TODO implement singleton structure
 	public PhotoManager() {
 		photoTagCollector = PhotoFactory.getInstance().createPhotoTagCollector();
 	}
@@ -72,7 +73,7 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 *
 	 */
-	public static final PhotoManager getInstance() {
+	public static PhotoManager getInstance() {
 		return instance;
 	}
 
@@ -93,7 +94,7 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 *
 	 */
-	public final Photo getPhoto(PhotoId id) {
+	public Photo getPhoto(PhotoId id) {
 		return instance.getPhotoFromId(id);
 	}
 
@@ -136,7 +137,7 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 * @methodtype get
 	 */
-	public final Photo getPhoto(String id) {
+	public Photo getPhoto(String id) {
 		return getPhoto(PhotoId.getIdFromString(id));
 	}
 

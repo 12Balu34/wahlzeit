@@ -20,7 +20,11 @@ import org.wahlzeit.model.persistence.PersistenceTestSuite;
         TagsTest.class,
         UserStatusTest.class,
         ValueTest.class,
-        PersistenceTestSuite.class
+        PersistenceTestSuite.class,
+        KanzlerPhotoTest.class,
+        KanzlerPhotoFactoryTest.class,
+        KanzlerPhotoManagerTest.class
 })
+
 public class ModelTestSuite {
 }
