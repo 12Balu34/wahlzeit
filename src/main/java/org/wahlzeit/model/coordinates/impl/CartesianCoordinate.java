@@ -18,22 +18,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.wahlzeit.model;
+package org.wahlzeit.model.coordinates.impl;
 
+
+import org.wahlzeit.model.coordinates.Coordinate;
 
 /**
  * Class representing a three dimensional Cartesian coordinate.
  *
  * @author 12Balu34
  */
-public class Coordinate {
+public class CartesianCoordinate implements Coordinate {
 
     private static final double DELTA = 1e-6;
     private double x;
     private double y;
     private double z;
 
-    public Coordinate(double x, double y, double z) {
+    public CartesianCoordinate(double x, double y, double z) {
 
         this.x = x;
         this.y = y;
@@ -92,12 +94,17 @@ public class Coordinate {
      */
     public boolean isEqual(Coordinate coordinate) {
 
+        if (this == coordinate) {
+            return true;
+        }
         if (coordinate == null) {
             return false;
         }
-        return ((Math.abs(this.getX() - coordinate.getX()) < DELTA)
-                && (Math.abs(this.getY() - coordinate.getY()) < DELTA)
-                && (Math.abs(this.getZ() - coordinate.getZ()) < DELTA));
+
+        CartesianCoordinate otherCoordinate = coordinate.asCartesianCoordinate();
+        return ((Math.abs(this.getX() - otherCoordinate.getX()) < DELTA)
+                && (Math.abs(this.getY() - otherCoordinate.getY()) < DELTA)
+                && (Math.abs(this.getZ() - otherCoordinate.getZ()) < DELTA));
     }
 
     /**
@@ -109,7 +116,7 @@ public class Coordinate {
     @Override
     public boolean equals(Object obj) {
 
-        return ((obj instanceof Coordinate) && (isEqual((Coordinate) obj)));
+        return ((obj instanceof CartesianCoordinate) && (isEqual((CartesianCoordinate) obj)));
     }
 
     @Override
@@ -132,7 +139,7 @@ public class Coordinate {
      * @param coordinate
      * @return direct distance between two coordinates
      */
-    public double getDistance(Coordinate coordinate) {
+    public double getDistance(CartesianCoordinate coordinate) {
 
         return Math.sqrt(
                 Math.pow(coordinate.x - this.x, 2.0) +
@@ -140,4 +147,38 @@ public class Coordinate {
                         Math.pow(coordinate.z - this.z, 2.0)
         );
     }
+
+    @Override
+    public CartesianCoordinate asCartesianCoordinate() {
+        return this;
+    }
+
+    @Override
+    public double getCartesianDistance(Coordinate coordinate) {
+        return this.getDistance(coordinate.asCartesianCoordinate()) ;
+    }
+
+    @Override
+    public SphericCoordinate asSphericCoordinate() {
+
+        double radius = Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getY(),2) + Math.pow(this.getZ(),2));
+
+        double longitude = Math.toDegrees(Math.acos(this.getZ()/radius));
+
+        double latitude = Math.toDegrees(Math.atan(this.getY()/this.getX()));
+
+        return new SphericCoordinate(longitude,latitude,radius);
+    }
+
+    @Override
+    public double getSphericDistance(Coordinate coordinate) {
+
+        return this.asSphericCoordinate().getSphericDistance(coordinate.asSphericCoordinate());
+    }
+
+    @Override
+    public double getDistance(Coordinate coordinate) {
+        return this.getDistance(coordinate.asSphericCoordinate());
+    }
+
 }

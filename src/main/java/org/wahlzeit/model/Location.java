@@ -20,6 +20,9 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.coordinates.Coordinate;
+import org.wahlzeit.model.coordinates.impl.CartesianCoordinate;
+
 /**
  * Class representing a location
  * @author 12Balu34
@@ -43,7 +46,7 @@ public class Location {
     /**
      * @param coordinate instance of Coordinate to be set
      */
-    public void setCoordinate(Coordinate coordinate) {
+    public void setCoordinate(CartesianCoordinate coordinate) {
         this.coordinate = coordinate;
     }
 }

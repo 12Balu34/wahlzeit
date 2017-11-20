@@ -23,6 +23,7 @@ package org.wahlzeit.model;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.wahlzeit.model.coordinates.impl.CartesianCoordinate;
 
 
 public class LocationTest {
@@ -35,10 +36,10 @@ public class LocationTest {
     @Before
     public void setUp() {
         //different objects witch same coordinates
-        location1 = new Location(new Coordinate(1.0, 45.0, 33.0));
-        location2 = new Location(new Coordinate(1.0, 45.0, 33.0));
+        location1 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
+        location2 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
 
-        location3 = new Location(new Coordinate(9.0, -9087656241.987, 42));
+        location3 = new Location(new CartesianCoordinate(9.0, -9087656241.987, 42));
         genericObject = new Object();
     }
 
