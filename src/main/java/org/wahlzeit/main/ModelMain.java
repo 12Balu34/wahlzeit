@@ -54,17 +54,14 @@ public abstract class ModelMain extends AbstractMain {
 		log.config(LogBuilder.createSystemMessage().addAction("load user").toString());
 		UserManager.getInstance().init();
 
-		log.config(LogBuilder.createSystemMessage().addAction("init PhotoFactory").toString());
-		PhotoFactory.initialize();
+		log.config(LogBuilder.createSystemMessage().addAction("init PhotoFactory" ).toString());
+		PhotoFactory.getInstance();
+		log.info(PhotoFactory.getInstance().toString() + "was instantiated");
 
-		log.config(LogBuilder.createSystemMessage().addAction("load Photos").toString());
-		PhotoManager.getInstance().init();
+		log.config(LogBuilder.createSystemMessage().addAction("load Photos"  ).toString());
+		PhotoManager.getInstance();
+		log.info(PhotoManager.getInstance().toString() + "was instantiated");
 
-		log.config(LogBuilder.createSystemMessage().addAction("init PhotoFactory").toString());
-		KanzlerPhotoFactory.initialize();
-
-		log.config(LogBuilder.createSystemMessage().addAction("load Photos").toString());
-		KanzlerPhotoManager.getInstance().init();
 	}
 
 
