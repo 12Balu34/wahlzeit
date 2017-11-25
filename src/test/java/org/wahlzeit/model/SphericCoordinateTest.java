@@ -142,4 +142,12 @@ public class SphericCoordinateTest {
         Assert.assertEquals(spheric.getLongitude(), reconvertedSpheric.getLongitude(),deltaValue);
         Assert.assertEquals(spheric.getRadius(), reconvertedSpheric.getRadius(),deltaValue);
     }
+
+    @Test
+    public void getDistanceOfSphericAndCartesian_shouldReturn6378885_810032() throws Exception {
+        CartesianCoordinate cartesian = new CartesianCoordinate(18,656,987);
+        SphericCoordinate spheric = new SphericCoordinate(45,-75);
+
+        spheric.getDistance(cartesian);
+    }
 }

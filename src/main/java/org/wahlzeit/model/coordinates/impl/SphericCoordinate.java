@@ -107,12 +107,12 @@ public class SphericCoordinate implements Coordinate {
     @Override
     public double getCartesianDistance(Coordinate coordinate) {
 
-        return this.asCartesianCoordinate().getDistance(coordinate.asCartesianCoordinate());
+        return this.asCartesianCoordinate().getCartesianDistance(coordinate);
     }
 
     @Override
     public double getDistance(Coordinate coordinate) {
-        return this.getCartesianDistance(coordinate);
+        return this.asCartesianCoordinate().getDistance(coordinate);
     }
 
 
