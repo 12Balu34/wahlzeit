@@ -24,40 +24,54 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.wahlzeit.model.coordinates.impl.CartesianCoordinate;
+import org.wahlzeit.model.coordinates.impl.SphericCoordinate;
 
 
 public class LocationTest {
 
-    Location location1;
-    Location location2;
-    Location location3;
+    Location cartesianLocation1;
+    Location cartesianLocation2;
+    Location sphericLocation1;
+    Location sphericLocation2;
+
+    Location location5;
     Object genericObject;
 
     @Before
     public void setUp() {
         //different objects witch same coordinates
-        location1 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
-        location2 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
+        cartesianLocation1 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
+        cartesianLocation2 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
 
-        location3 = new Location(new CartesianCoordinate(9.0, -9087656241.987, 42));
+        sphericLocation1 = new Location(new SphericCoordinate(67, 78 ));
+        sphericLocation2 = new Location(new SphericCoordinate(67, 78 ));
+
+        sphericLocation1 = new Location(new CartesianCoordinate(9.0, -9087656241.987, 42));
         genericObject = new Object();
     }
+
 
     @Test
     public void locationEqualsShouldReturnTrue() {
 
-        Assert.assertEquals(location1, location1);
+        Assert.assertEquals(cartesianLocation1, cartesianLocation1);
+        Assert.assertEquals(sphericLocation1, sphericLocation1);
+
     }
 
     @Test
     public void locationEqualsShouldReturnFalse() {
 
-        Assert.assertFalse(location1.equals(location2));
-        Assert.assertFalse(location2.equals(location1));
+        Assert.assertFalse(cartesianLocation1.equals(cartesianLocation2));
+        Assert.assertFalse(cartesianLocation2.equals(cartesianLocation1));
 
-        Assert.assertFalse(location1.equals(location3));
-        Assert.assertFalse(location3.equals(location2));
-        Assert.assertFalse(location3.equals(genericObject));
+        Assert.assertFalse(sphericLocation1.equals(sphericLocation2));
+        Assert.assertFalse(sphericLocation2.equals(sphericLocation1));
+
+
+        Assert.assertFalse(cartesianLocation1.equals(sphericLocation1));
+        Assert.assertFalse(sphericLocation1.equals(cartesianLocation2));
+        Assert.assertFalse(sphericLocation1.equals(genericObject));
     }
 
 
