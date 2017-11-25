@@ -15,6 +15,7 @@ public class KanzlerPhoto extends Photo {
 
 
     public KanzlerPhoto() {
+        super();
     }
 
     public KanzlerPhoto(PhotoId myId) {
