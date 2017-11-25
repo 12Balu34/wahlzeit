@@ -45,323 +45,338 @@ import java.util.logging.Logger;
  */
 public class PhotoManager extends ObjectManager {
 
-	/**
-	 *
-	 */
-	protected static final PhotoManager instance = new PhotoManager();
+    /**
+     *
+     */
+    protected static PhotoManager instance;
 
-	private static final Logger log = Logger.getLogger(PhotoManager.class.getName());
+    private static final Logger log = Logger.getLogger(PhotoManager.class.getName());
 
-	/**
-	 * In-memory cache for photos
-	 */
-	protected Map<PhotoId, Photo> photoCache = new HashMap<PhotoId, Photo>();
+    /**
+     * In-memory cache for photos
+     */
+    protected Map<PhotoId, Photo> photoCache = new HashMap<PhotoId, Photo>();
 
-	/**
-	 *
-	 */
-	protected PhotoTagCollector photoTagCollector = null;
+    /**
+     *
+     */
+    protected PhotoTagCollector photoTagCollector;
 
-	/**
-	 *
-	 */
-	//TODO implement singleton structure
-	public PhotoManager() {
-		photoTagCollector = PhotoFactory.getInstance().createPhotoTagCollector();
-	}
+    /**
+     *
+     */
+    protected PhotoManager() {
+        photoTagCollector = PhotoFactory.getInstance().createPhotoTagCollector();
+    }
 
-	/**
-	 *
-	 */
-	public static PhotoManager getInstance() {
-		return instance;
-	}
+    /**
+     *
+     */
+    public static PhotoManager getInstance() {
+        if (instance == null) {
+            log.config(LogBuilder.createSystemMessage().addAction("Instantiating PhotoManager").toString());
+            instance = new KanzlerPhotoManager();
+        }
+        return instance;
+    }
 
-	/**
-	 *
-	 */
-	public final boolean hasPhoto(String id) {
-		return hasPhoto(PhotoId.getIdFromString(id));
-	}
+    public static void setInstance(PhotoManager photoManager) {
+        if (instance != null) {
+            throw new IllegalStateException("attempt to initialize PhotoManager twice");
+        }
+        instance = photoManager;
+    }
 
-	/**
-	 *
-	 */
-	public final boolean hasPhoto(PhotoId id) {
-		return getPhoto(id) != null;
-	}
 
-	/**
-	 *
-	 */
-	public Photo getPhoto(PhotoId id) {
-		return instance.getPhotoFromId(id);
-	}
+    /**
+     *
+     */
+    public final boolean hasPhoto(String id) {
+        return hasPhoto(PhotoId.getIdFromString(id));
+    }
 
-	/**
-	 *
-	 */
-	public Photo getPhotoFromId(PhotoId id) {
-		if (id == null) {
-			return null;
-		}
+    /**
+     *
+     */
+    public final boolean hasPhoto(PhotoId id) {
+        return getPhoto(id) != null;
+    }
 
-		Photo result = doGetPhotoFromId(id);
+    /**
+     *
+     */
+    public Photo getPhoto(PhotoId id) {
+        return instance.getPhotoFromId(id);
+    }
 
-		if (result == null) {
-			result = PhotoFactory.getInstance().loadPhoto(id);
-			if (result != null) {
-				doAddPhoto(result);
-			}
-		}
+    /**
+     *
+     */
+    public Photo getPhotoFromId(PhotoId id) {
+        if (id == null) {
+            return null;
+        }
 
-		return result;
-	}
+        Photo result = doGetPhotoFromId(id);
 
-	/**
-	 * @methodtype get
-	 * @methodproperties primitive
-	 */
-	protected Photo doGetPhotoFromId(PhotoId id) {
-		return photoCache.get(id);
-	}
+        if (result == null) {
+            result = PhotoFactory.getInstance().loadPhoto(id);
+            if (result != null) {
+                doAddPhoto(result);
+            }
+        }
 
-	/**
-	 * @methodtype command
-	 * @methodproperties primitive
-	 */
-	protected void doAddPhoto(Photo myPhoto) {
-		photoCache.put(myPhoto.getId(), myPhoto);
-	}
+        return result;
+    }
 
-	/**
-	 * @methodtype get
-	 */
-	public Photo getPhoto(String id) {
-		return getPhoto(PhotoId.getIdFromString(id));
-	}
+    /**
+     * @methodtype get
+     * @methodproperties primitive
+     */
+    protected Photo doGetPhotoFromId(PhotoId id) {
+        return photoCache.get(id);
+    }
 
-	/**
-	 * @methodtype init Loads all Photos from the Datastore and holds them in the cache
-	 */
-	public void init() {
-		loadPhotos();
-	}
+    /**
+     * @methodtype command
+     * @methodproperties primitive
+     */
+    protected void doAddPhoto(Photo myPhoto) {
+        photoCache.put(myPhoto.getId(), myPhoto);
+        log.info(myPhoto.toString() + "added to cache");
+    }
 
-	/**
-	 * @methodtype command
-	 *
-	 * Load all persisted photos. Executed when Wahlzeit is restarted.
-	 */
-	public void loadPhotos() {
-		Collection<Photo> existingPhotos = ObjectifyService.run(new Work<Collection<Photo>>() {
-			@Override
-			public Collection<Photo> run() {
-				Collection<Photo> existingPhotos = new ArrayList<Photo>();
-				readObjects(existingPhotos, Photo.class);
-				return existingPhotos;
-			}
-		});
+    /**
+     * @methodtype get
+     */
+    public Photo getPhoto(String id) {
+        return getPhoto(PhotoId.getIdFromString(id));
+    }
 
-		for (Photo photo : existingPhotos) {
-			if (!doHasPhoto(photo.getId())) {
-				log.config(LogBuilder.createSystemMessage().
-						addParameter("Load Photo with ID", photo.getIdAsString()).toString());
-				loadScaledImages(photo);
-				doAddPhoto(photo);
-			} else {
-				log.config(LogBuilder.createSystemMessage().
-						addParameter("Already loaded Photo", photo.getIdAsString()).toString());
-			}
-		}
+    /**
+     * @methodtype init Loads all Photos from the Datastore and holds them in the cache
+     */
+    public void init() {
+        loadPhotos();
+    }
 
-		log.info(LogBuilder.createSystemMessage().addMessage("All photos loaded.").toString());
-	}
+    /**
+     * @methodtype command
+     * <p>
+     * Load all persisted photos. Executed when Wahlzeit is restarted.
+     */
+    public void loadPhotos() {
+        Collection<Photo> existingPhotos = ObjectifyService.run(new Work<Collection<Photo>>() {
+            @Override
+            public Collection<Photo> run() {
+                Collection<Photo> existingPhotos = new ArrayList<Photo>();
+                readObjects(existingPhotos, Photo.class);
+                return existingPhotos;
+            }
+        });
 
-	/**
-	 * @methodtype boolean-query
-	 * @methodproperty primitive
-	 */
-	protected boolean doHasPhoto(PhotoId id) {
-		return photoCache.containsKey(id);
-	}
+        for (Photo photo : existingPhotos) {
+            if (!doHasPhoto(photo.getId())) {
+                log.config(LogBuilder.createSystemMessage().
+                        addParameter("Load Photo with ID", photo.getIdAsString()).toString());
+                loadScaledImages(photo);
+                doAddPhoto(photo);
+            }
+            else {
+                log.config(LogBuilder.createSystemMessage().
+                        addParameter("Already loaded Photo", photo.getIdAsString()).toString());
+            }
+        }
 
-	/**
-	 * @methodtype command
-	 *
-	 * Loads all scaled Images of this Photo from Google Cloud Storage
-	 */
-	protected void loadScaledImages(Photo photo) {
-		String photoIdAsString = photo.getId().asString();
-		ImageStorage imageStorage = ImageStorage.getInstance();
+        log.info(LogBuilder.createSystemMessage().addMessage("All photos loaded.").toString());
+    }
 
-		for (PhotoSize photoSize : PhotoSize.values()) {
-			log.config(LogBuilder.createSystemMessage().
-					addAction("loading image").
-					addParameter("image size", photoSize.asString()).
-					addParameter("photo ID", photoIdAsString).toString());
-			if (imageStorage.doesImageExist(photoIdAsString, photoSize.asInt())) {
-				try {
-					Serializable rawImage = imageStorage.readImage(photoIdAsString, photoSize.asInt());
-					if (rawImage != null && rawImage instanceof Image) {
-						photo.setImage(photoSize, (Image) rawImage);
-					}
-				} catch (IOException e) {
-					log.warning(LogBuilder.createSystemMessage().
-							addParameter("size", photoSize.asString()).
-							addParameter("photo ID", photoIdAsString).
-							addException("Could not load image although it exists", e).toString());
-				}
-			} else {
-				log.config(LogBuilder.createSystemMessage().
-						addParameter("Size does not exist", photoSize.asString()).toString());
-			}
-		}
-	}
+    /**
+     * @methodtype boolean-query
+     * @methodproperty primitive
+     */
+    protected boolean doHasPhoto(PhotoId id) {
+        return photoCache.containsKey(id);
+    }
 
-	/**
-	 *
-	 */
-	public void savePhoto(Photo photo) {
-		updateObject(photo);
-	}
+    /**
+     * @methodtype command
+     * <p>
+     * Loads all scaled Images of this Photo from Google Cloud Storage
+     */
+    protected void loadScaledImages(Photo photo) {
+        String photoIdAsString = photo.getId().asString();
+        ImageStorage imageStorage = ImageStorage.getInstance();
 
-	@Override
-	protected void updateDependents(Persistent obj) {
-		if (obj instanceof Photo) {
-			Photo photo = (Photo) obj;
-			saveScaledImages(photo);
-			updateTags(photo);
-			UserManager userManager = UserManager.getInstance();
-			Client owner = userManager.getClientById(photo.getOwnerId());
-			userManager.saveClient(owner);
-		}
-	}
+        for (PhotoSize photoSize : PhotoSize.values()) {
+            log.config(LogBuilder.createSystemMessage().
+                    addAction("loading image").
+                    addParameter("image size", photoSize.asString()).
+                    addParameter("photo ID", photoIdAsString).toString());
+            if (imageStorage.doesImageExist(photoIdAsString, photoSize.asInt())) {
+                try {
+                    Serializable rawImage = imageStorage.readImage(photoIdAsString, photoSize.asInt());
+                    if (rawImage != null && rawImage instanceof Image) {
+                        photo.setImage(photoSize, (Image) rawImage);
+                    }
+                } catch (IOException e) {
+                    log.warning(LogBuilder.createSystemMessage().
+                            addParameter("size", photoSize.asString()).
+                            addParameter("photo ID", photoIdAsString).
+                            addException("Could not load image although it exists", e).toString());
+                }
+            }
+            else {
+                log.config(LogBuilder.createSystemMessage().
+                        addParameter("Size does not exist", photoSize.asString()).toString());
+            }
+        }
+    }
 
-	/**
-	 * @methodtype helper
-	 */
-	public List<Tag> addTagsThatMatchCondition(List<Tag> tags, String condition) {
-		readObjects(tags, Tag.class, Tag.TEXT, condition);
-		return tags;
-	}
+    /**
+     *
+     */
+    public void savePhoto(Photo photo) {
+        updateObject(photo);
+    }
 
-	/**
-	 * @methodtype command
-	 *
-	 * Persists all available sizes of the Photo. If one size exceeds the limit of the persistence layer, e.g. > 1MB for
-	 * the Datastore, it is simply not persisted.
-	 */
-	protected void saveScaledImages(Photo photo) {
-		String photoIdAsString = photo.getId().asString();
-		ImageStorage imageStorage = ImageStorage.getInstance();
-		PhotoSize photoSize;
-		int it = 0;
-		boolean moreSizesExist = true;
-		do{
-			photoSize = PhotoSize.values()[it];
-			it++;
-			Image image = photo.getImage(photoSize);
-			if (image != null) {
-				try {
-					if (!imageStorage.doesImageExist(photoIdAsString, photoSize.asInt())) {
-						imageStorage.writeImage(image, photoIdAsString, photoSize.asInt());
-					}
-				} catch (Exception e) {
-					log.warning(LogBuilder.createSystemMessage().
-							addException("Problem when storing image", e).toString());
-					moreSizesExist = false;
-				}
-			} else {
-				log.config(LogBuilder.createSystemMessage().
-						addParameter("No image for size", photoSize.asString()).toString());
-				moreSizesExist = false;
-			}
-		} while (it < PhotoSize.values().length && moreSizesExist);
-	}
+    @Override
+    protected void updateDependents(Persistent obj) {
+        if (obj instanceof Photo) {
+            Photo photo = (Photo) obj;
+            saveScaledImages(photo);
+            updateTags(photo);
+            UserManager userManager = UserManager.getInstance();
+            Client owner = userManager.getClientById(photo.getOwnerId());
+            userManager.saveClient(owner);
+        }
+    }
 
-	/**
-	 * Removes all tags of the Photo (obj) in the datastore that have been removed by the user and adds all new tags of
-	 * the photo to the datastore.
-	 */
-	protected void updateTags(Photo photo) {
-		// delete all existing tags, for the case that some have been removed
-		deleteObjects(Tag.class, Tag.PHOTO_ID, photo.getId().asString());
+    /**
+     * @methodtype helper
+     */
+    public List<Tag> addTagsThatMatchCondition(List<Tag> tags, String condition) {
+        readObjects(tags, Tag.class, Tag.TEXT, condition);
+        return tags;
+    }
 
-		// add all current tags to the datastore
-		Set<String> tags = new HashSet<String>();
-		photoTagCollector.collect(tags, photo);
-		for (Iterator<String> i = tags.iterator(); i.hasNext(); ) {
-			Tag tag = new Tag(i.next(), photo.getId().asString());
-			log.config(LogBuilder.createSystemMessage().addParameter("Writing Tag", tag.asString()).toString());
-			writeObject(tag);
-		}
-	}
+    /**
+     * @methodtype command
+     * <p>
+     * Persists all available sizes of the Photo. If one size exceeds the limit of the persistence layer, e.g. > 1MB for
+     * the Datastore, it is simply not persisted.
+     */
+    protected void saveScaledImages(Photo photo) {
+        String photoIdAsString = photo.getId().asString();
+        ImageStorage imageStorage = ImageStorage.getInstance();
+        PhotoSize photoSize;
+        int it = 0;
+        boolean moreSizesExist = true;
+        do {
+            photoSize = PhotoSize.values()[it];
+            it++;
+            Image image = photo.getImage(photoSize);
+            if (image != null) {
+                try {
+                    if (!imageStorage.doesImageExist(photoIdAsString, photoSize.asInt())) {
+                        imageStorage.writeImage(image, photoIdAsString, photoSize.asInt());
+                    }
+                } catch (Exception e) {
+                    log.warning(LogBuilder.createSystemMessage().
+                            addException("Problem when storing image", e).toString());
+                    moreSizesExist = false;
+                }
+            }
+            else {
+                log.config(LogBuilder.createSystemMessage().
+                        addParameter("No image for size", photoSize.asString()).toString());
+                moreSizesExist = false;
+            }
+        } while (it < PhotoSize.values().length && moreSizesExist);
+    }
 
-	/**
-	 *
-	 */
-	public void savePhotos() throws IOException{
-		updateObjects(photoCache.values());
-	}
+    /**
+     * Removes all tags of the Photo (obj) in the datastore that have been removed by the user and adds all new tags of
+     * the photo to the datastore.
+     */
+    protected void updateTags(Photo photo) {
+        // delete all existing tags, for the case that some have been removed
+        deleteObjects(Tag.class, Tag.PHOTO_ID, photo.getId().asString());
 
-	/**
-	 * @methodtype get
-	 */
-	public Map<PhotoId, Photo> getPhotoCache() {
-		return photoCache;
-	}
+        // add all current tags to the datastore
+        Set<String> tags = new HashSet<String>();
+        photoTagCollector.collect(tags, photo);
+        for (Iterator<String> i = tags.iterator(); i.hasNext(); ) {
+            Tag tag = new Tag(i.next(), photo.getId().asString());
+            log.config(LogBuilder.createSystemMessage().addParameter("Writing Tag", tag.asString()).toString());
+            writeObject(tag);
+        }
+    }
 
-	/**
-	 *
-	 */
-	public Set<Photo> findPhotosByOwner(String ownerName) {
-		Set<Photo> result = new HashSet<Photo>();
-		readObjects(result, Photo.class, Photo.OWNER_ID, ownerName);
+    /**
+     *
+     */
+    public void savePhotos() throws IOException {
+        updateObjects(photoCache.values());
+    }
 
-		for (Iterator<Photo> i = result.iterator(); i.hasNext(); ) {
-			doAddPhoto(i.next());
-		}
+    /**
+     * @methodtype get
+     */
+    public Map<PhotoId, Photo> getPhotoCache() {
+        return photoCache;
+    }
 
-		return result;
-	}
+    /**
+     *
+     */
+    public Set<Photo> findPhotosByOwner(String ownerName) {
+        Set<Photo> result = new HashSet<Photo>();
+        readObjects(result, Photo.class, Photo.OWNER_ID, ownerName);
 
-	/**
-	 *
-	 */
-	public Photo getVisiblePhoto(PhotoFilter filter) {
-		filter.generateDisplayablePhotoIds();
-		return getPhotoFromId(filter.getRandomDisplayablePhotoId());
-	}
+        for (Iterator<Photo> i = result.iterator(); i.hasNext(); ) {
+            doAddPhoto(i.next());
+        }
 
-	/**
-	 *
-	 */
-	public Photo createPhoto(String filename, Image uploadedImage) throws Exception {
-		PhotoId id = PhotoId.getNextId();
-		Photo result = PhotoUtil.createPhoto(filename, id, uploadedImage);
-		addPhoto(result);
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * @methodtype command
-	 */
-	public void addPhoto(Photo photo) throws IOException {
-		PhotoId id = photo.getId();
-		assertIsNewPhoto(id);
-		doAddPhoto(photo);
+    /**
+     *
+     */
+    public Photo getVisiblePhoto(PhotoFilter filter) {
+        filter.generateDisplayablePhotoIds();
+        return getPhotoFromId(filter.getRandomDisplayablePhotoId());
+    }
 
-		GlobalsManager.getInstance().saveGlobals();
-	}
+    /**
+     *
+     */
+    public Photo createPhoto(String filename, Image uploadedImage) throws Exception {
+        PhotoId id = PhotoId.getNextId();
+        Photo result = PhotoUtil.createPhoto(filename, id, uploadedImage);
+        addPhoto(result);
+        return result;
+    }
 
-	/**
-	 * @methodtype assertion
-	 */
-	protected void assertIsNewPhoto(PhotoId id) {
-		if (hasPhoto(id)) {
-			throw new IllegalStateException("Photo already exists!");
-		}
-	}
+    /**
+     * @methodtype command
+     */
+    public void addPhoto(Photo photo) throws IOException {
+        PhotoId id = photo.getId();
+        assertIsNewPhoto(id);
+        doAddPhoto(photo);
+
+        GlobalsManager.getInstance().saveGlobals();
+    }
+
+    /**
+     * @methodtype assertion
+     */
+    protected void assertIsNewPhoto(PhotoId id) {
+        if (hasPhoto(id)) {
+            throw new IllegalStateException("Photo already exists!");
+        }
+    }
 
 }

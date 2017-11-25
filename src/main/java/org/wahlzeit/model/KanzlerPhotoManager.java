@@ -20,17 +20,8 @@
 
 package org.wahlzeit.model;
 
-import com.google.appengine.api.images.Image;
-import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Work;
-import org.wahlzeit.model.persistence.ImageStorage;
 import org.wahlzeit.services.LogBuilder;
-import org.wahlzeit.services.ObjectManager;
-import org.wahlzeit.services.Persistent;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -41,7 +32,7 @@ public class KanzlerPhotoManager extends PhotoManager {
 	/**
 	 *
 	 */
-	protected static final KanzlerPhotoManager instance = new KanzlerPhotoManager();
+	protected static KanzlerPhotoManager instance;
 
 	private static final Logger log = Logger.getLogger(KanzlerPhotoManager.class.getName());
 
@@ -56,37 +47,18 @@ public class KanzlerPhotoManager extends PhotoManager {
 	 *
 	 */
 	public static KanzlerPhotoManager getInstance() {
+		if (instance == null) {
+			log.config(LogBuilder.createSystemMessage().addAction("Instantiating KanzlerPhotoManager").toString());
+			instance = new KanzlerPhotoManager();
+		}
 		return instance;
 	}
 
-	/**
-	 *
-	 */
-	/**
-	 *
-	 */
-	public Photo getPhoto(PhotoId id) {
-		return instance.getPhotoFromId(id);
-	}
-
-	/**
-	 *
-	 */
-	public Photo getPhotoFromId(PhotoId id) {
-		if (id == null) {
-			return null;
+	public static void setInstance (KanzlerPhotoManager kanzlerPhotoManager) {
+		if (instance != null) {
+			throw new IllegalStateException("attempt to initialize KanzlerPhotoManager twice");
 		}
-
-		Photo result = doGetPhotoFromId(id);
-
-		if (result == null) {
-			result = KanzlerPhotoFactory.getInstance().loadPhoto(id);
-			if (result != null) {
-				doAddPhoto(result);
-			}
-		}
-
-		return result;
+		instance = kanzlerPhotoManager;
 	}
 
 }

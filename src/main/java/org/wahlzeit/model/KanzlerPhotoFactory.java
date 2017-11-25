@@ -33,7 +33,7 @@ public class KanzlerPhotoFactory extends PhotoFactory {
 	/**
 	 * Hidden singleton instance; needs to be initialized from the outside.
 	 */
-	private static KanzlerPhotoFactory instance = null;
+	private static KanzlerPhotoFactory instance;
 
 	/**
 	 *
@@ -43,32 +43,23 @@ public class KanzlerPhotoFactory extends PhotoFactory {
 	}
 
 	/**
-	 * Hidden singleton instance; needs to be initialized from the outside.
-	 */
-	public static void initialize() {
-		getInstance(); // drops result due to getInstance() side-effects
-	}
-
-	/**
 	 * Public singleton access method.
 	 */
 	public static synchronized KanzlerPhotoFactory getInstance() {
 		if (instance == null) {
-			log.config(LogBuilder.createSystemMessage().addAction("setting generic KanzlerPhotoFactory").toString());
-			setInstance(new KanzlerPhotoFactory());
+			log.config(LogBuilder.createSystemMessage().addAction("Instantiating KanzlerPhotoFactory").toString());
+			instance = new KanzlerPhotoFactory();
 		}
-
 		return instance;
 	}
 
 	/**
 	 * Method to set the singleton instance of PhotoFactory.
 	 */
-	protected static synchronized void setInstance(KanzlerPhotoFactory kanzlerPhotoFactory) {
+	public static synchronized void setInstance(KanzlerPhotoFactory kanzlerPhotoFactory) {
 		if (instance != null) {
 			throw new IllegalStateException("attempt to initialize KanzlerPhotoFactory twice");
 		}
-
 		instance = kanzlerPhotoFactory;
 	}
 
