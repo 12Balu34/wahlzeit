@@ -123,29 +123,29 @@ public class CartesianCoordinateTest {
     @Test
     public void getDistanceOfEqualCoordinatesShouldReturn0() {
 
-        Assert.assertEquals(0.0, coord1.getDistance(coord2), 0);
-        Assert.assertEquals(0.0, coord2.getDistance(coord1), 0);
+        Assert.assertEquals(0.0, coord1.getCartesianDistance(coord2), 0);
+        Assert.assertEquals(0.0, coord2.getCartesianDistance(coord1), 0);
 
-        Assert.assertEquals(0.0, coord4.getDistance(coord5), 0);
-        Assert.assertEquals(0.0, coord5.getDistance(coord4), 0);
+        Assert.assertEquals(0.0, coord4.getCartesianDistance(coord5), 0);
+        Assert.assertEquals(0.0, coord5.getCartesianDistance(coord4), 0);
     }
 
     @Test
     public void getDistanceShouldReturnSqrt3() {
 
-        Assert.assertEquals(Math.sqrt(3.0), coord1.getDistance(coord3), 0);
+        Assert.assertEquals(Math.sqrt(3.0), coord1.getCartesianDistance(coord3), 0);
     }
 
     @Test
     public void getDistanceShouldReturnSqrt831486222779_4() {
 
-        Assert.assertEquals(Math.sqrt(1831486222779.4), coord4.getDistance(coord6), 0.0001);
+        Assert.assertEquals(Math.sqrt(1831486222779.4), coord4.getCartesianDistance(coord6), 0.0001);
     }
 
     @Test
     public void getDistanceShouldReturnSqrt333963105497_82() {
 
-        Assert.assertEquals(Math.sqrt(333963105497.82), coord4.getDistance(coord7), 0.0001);
+        Assert.assertEquals(Math.sqrt(333963105497.82), coord4.getCartesianDistance(coord7), 0.0001);
     }
 
     @Test
@@ -168,5 +168,21 @@ public class CartesianCoordinateTest {
         SphericCoordinate spheric = cartesian.asSphericCoordinate();
         CartesianCoordinate cartesianReconverted = spheric.asCartesianCoordinate();
         Assert.assertEquals(cartesianReconverted, cartesian);
+    }
+
+    @Test
+    public void getDistanceOfCartesianAndSpheric_shouldReturn6378885_810032() throws Exception {
+        CartesianCoordinate cartesian = new CartesianCoordinate(18,656,987);
+        SphericCoordinate spheric = new SphericCoordinate(45,-75);
+
+        cartesian.getCartesianDistance(spheric);
+    }
+
+    @Test
+    public void getDistance_shouldBehaveEqually() throws Exception {
+        CartesianCoordinate cartesian = new CartesianCoordinate(18,656,987);
+        SphericCoordinate spheric = new SphericCoordinate(45,-75);
+
+        Assert.assertEquals(cartesian.getDistance(spheric), spheric.getDistance(cartesian), 0);
     }
 }

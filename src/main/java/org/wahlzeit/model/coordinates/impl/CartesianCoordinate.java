@@ -139,14 +139,18 @@ public class CartesianCoordinate implements Coordinate {
      * @param coordinate
      * @return direct distance between two coordinates
      */
-    public double getDistance(CartesianCoordinate coordinate) {
+    @Override
+    public double getCartesianDistance (Coordinate coordinate) {
+
+        CartesianCoordinate toCartesian = coordinate.asCartesianCoordinate();
 
         return Math.sqrt(
-                Math.pow(coordinate.x - this.x, 2.0) +
-                        Math.pow(coordinate.y - this.y, 2.0) +
-                        Math.pow(coordinate.z - this.z, 2.0)
+                Math.pow(toCartesian.x - this.x, 2.0) +
+                        Math.pow(toCartesian.y - this.y, 2.0) +
+                        Math.pow(toCartesian.z - this.z, 2.0)
         );
     }
+
 
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
@@ -154,8 +158,8 @@ public class CartesianCoordinate implements Coordinate {
     }
 
     @Override
-    public double getCartesianDistance(Coordinate coordinate) {
-        return this.getDistance(coordinate.asCartesianCoordinate()) ;
+    public double getDistance (Coordinate coordinate) {
+        return this.getCartesianDistance(coordinate);
     }
 
     @Override
@@ -176,9 +180,5 @@ public class CartesianCoordinate implements Coordinate {
         return this.asSphericCoordinate().getSphericDistance(coordinate.asSphericCoordinate());
     }
 
-    @Override
-    public double getDistance(Coordinate coordinate) {
-        return this.getDistance(coordinate.asSphericCoordinate());
-    }
 
 }
