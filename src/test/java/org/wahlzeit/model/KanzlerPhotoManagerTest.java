@@ -31,27 +31,22 @@ import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 
 public class KanzlerPhotoManagerTest extends KanzlerDomainTest {
 
-    private KanzlerPhotoManager manager;
+    private PhotoManager manager;
     private KanzlerPhoto kanzler;
 
     @Before
     public void setUp() throws Exception {
-        manager = KanzlerPhotoManager.getInstance();
-        kanzler = new KanzlerPhoto("Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
 
+        manager = PhotoManager.getInstance();
+        kanzler = new KanzlerPhoto("Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
     }
 
     @Test
     public void checkInstantiation() throws Exception {
 
-
-
         Assert.assertNotNull(manager);
         Assert.assertFalse(manager.getClass().equals(PhotoManager.class));
         Assert.assertTrue(manager.getClass().equals(KanzlerPhotoManager.class));
-
-
-
     }
 
     @Test
@@ -65,8 +60,5 @@ public class KanzlerPhotoManagerTest extends KanzlerDomainTest {
         Assert.assertEquals(kanzler.getYearEnteringOffice(), persistedKanzler.getYearEnteringOffice());
         Assert.assertEquals(kanzler.getYearLeavingOffice(), persistedKanzler.getYearLeavingOffice());
         Assert.assertEquals(kanzler.getParty(), persistedKanzler.getParty());
-
-
-
     }
 }
