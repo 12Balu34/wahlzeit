@@ -46,7 +46,7 @@ public class Location {
     /**
      * @param coordinate instance of Coordinate to be set
      */
-    public void setCoordinate(CartesianCoordinate coordinate) {
+    public void setCoordinate(Coordinate coordinate) {
         this.coordinate = coordinate;
     }
 }
