@@ -28,9 +28,8 @@ import org.wahlzeit.model.coordinates.Coordinate;
  *
  * @author 12Balu34
  */
-public class CartesianCoordinate implements Coordinate {
+public class CartesianCoordinate extends AbstractCoordinate {
 
-    private static final double DELTA = 1e-6;
     private double x;
     private double y;
     private double z;
@@ -102,9 +101,9 @@ public class CartesianCoordinate implements Coordinate {
         }
 
         CartesianCoordinate otherCoordinate = coordinate.asCartesianCoordinate();
-        return ((Math.abs(this.getX() - otherCoordinate.getX()) < DELTA)
-                && (Math.abs(this.getY() - otherCoordinate.getY()) < DELTA)
-                && (Math.abs(this.getZ() - otherCoordinate.getZ()) < DELTA));
+        return ((Math.abs(this.getX() - otherCoordinate.getX()) < DOUBLE_COMPARISON_DELTA)
+                && (Math.abs(this.getY() - otherCoordinate.getY()) < DOUBLE_COMPARISON_DELTA)
+                && (Math.abs(this.getZ() - otherCoordinate.getZ()) < DOUBLE_COMPARISON_DELTA));
     }
 
     /**

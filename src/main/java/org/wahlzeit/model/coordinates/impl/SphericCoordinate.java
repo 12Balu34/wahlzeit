@@ -24,14 +24,13 @@ import org.wahlzeit.model.coordinates.Coordinate;
 
 import java.util.Objects;
 
-public class SphericCoordinate implements Coordinate {
+public class SphericCoordinate extends AbstractCoordinate {
 
     private double latitude;
     private double longitude;
     private double radius;
 
-    public static final double EARTH_RADIUS_IN_METERS = 6_378_388;
-    private static final double DELTA = 1e-6;
+    private static final double EARTH_RADIUS_IN_METERS = 6_378_388;
     private static final double MAX_LATITUDE = 90;
     private static final double MIN_LATITUDE = - 90;
     private static final double MAX_LONGITUDE = 180;
@@ -178,7 +177,7 @@ public class SphericCoordinate implements Coordinate {
      * @param otherCoordinate coordinate to be compared to
      */
     private void assertSameRadius (SphericCoordinate otherCoordinate) {
-        if (this.getRadius() - otherCoordinate.getRadius() > DELTA) {
+        if (this.getRadius() - otherCoordinate.getRadius() > DOUBLE_COMPARISON_DELTA) {
             throw new IllegalArgumentException("Unable to compare coordinates on different spheres");
         }
     }
