@@ -26,4 +26,50 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     protected static final double DOUBLE_COMPARISON_DELTA = 1e-6;
 
+    /**
+     * Delegates the equals method to isEqual () if the Object
+     * passed is of Class Coordinate.
+     * @param other
+     * @return true if obj is of class Coordinate and all attributes are equal.
+     */
+    @Override
+    public boolean equals(Object other) {
+
+        return (other instanceof Coordinate) && this.isEqual((Coordinate) other);
+    }
+
+    @Override
+    public abstract int hashCode();
+
+
+    @Override
+    public double getDistance(Coordinate coordinate) {
+        return this.asCartesianCoordinate().getCartesianDistance(coordinate);
+    }
+
+    /**
+     * Compares two double values for equality within the class' comparison delta.
+     * @param firstDoubleValue
+     * @param secondDoubleValue
+     * @return true if the two values differ no more than the class' comparison delta
+     */
+    public boolean areDoublesEqual (double firstDoubleValue, double secondDoubleValue) {
+
+        return ((Math.abs(firstDoubleValue - secondDoubleValue) < DOUBLE_COMPARISON_DELTA));
+    }
+
+    @Override
+    public abstract CartesianCoordinate asCartesianCoordinate();
+
+    @Override
+    public abstract double getCartesianDistance(Coordinate coordinate);
+
+    @Override
+    public abstract SphericCoordinate asSphericCoordinate();
+
+    @Override
+    public abstract double getSphericDistance(Coordinate coordinate);
+
+    @Override
+    public abstract boolean isEqual(Coordinate coordinate);
 }

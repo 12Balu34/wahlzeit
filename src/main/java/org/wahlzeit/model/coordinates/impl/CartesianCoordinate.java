@@ -101,21 +101,9 @@ public class CartesianCoordinate extends AbstractCoordinate {
         }
 
         CartesianCoordinate otherCoordinate = coordinate.asCartesianCoordinate();
-        return ((Math.abs(this.getX() - otherCoordinate.getX()) < DOUBLE_COMPARISON_DELTA)
-                && (Math.abs(this.getY() - otherCoordinate.getY()) < DOUBLE_COMPARISON_DELTA)
-                && (Math.abs(this.getZ() - otherCoordinate.getZ()) < DOUBLE_COMPARISON_DELTA));
-    }
-
-    /**
-     * Delegates the equals method to isEqual () if the Object
-     * passed is of Class Coordinate.
-     * @param obj
-     * @return true if obj is of class Coordinate and all attributes are equal.
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-        return ((obj instanceof CartesianCoordinate) && (isEqual((CartesianCoordinate) obj)));
+        return areDoublesEqual( this.getX(), otherCoordinate.getX() )
+                && areDoublesEqual( this.getY(), otherCoordinate.getY() )
+                && areDoublesEqual( this.getZ(), otherCoordinate.getZ() );
     }
 
     @Override
@@ -129,6 +117,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
         temp = Double.doubleToLongBits(z);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public CartesianCoordinate asCartesianCoordinate() {
+        return this;
     }
 
     /**
@@ -148,17 +141,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
                         Math.pow(toCartesian.y - this.y, 2.0) +
                         Math.pow(toCartesian.z - this.z, 2.0)
         );
-    }
-
-
-    @Override
-    public CartesianCoordinate asCartesianCoordinate() {
-        return this;
-    }
-
-    @Override
-    public double getDistance (Coordinate coordinate) {
-        return this.getCartesianDistance(coordinate);
     }
 
     @Override

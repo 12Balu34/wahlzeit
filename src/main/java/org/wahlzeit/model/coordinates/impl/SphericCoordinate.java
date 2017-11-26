@@ -57,11 +57,9 @@ public class SphericCoordinate extends AbstractCoordinate {
         this.radius = EARTH_RADIUS_IN_METERS;
     }
 
-
     public double getLatitude() {
         return latitude;
     }
-
 
     public void setLatitude(double latitude) {
         if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
@@ -90,6 +88,28 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     @Override
+    public boolean isEqual(Coordinate coordinate) {
+
+        if (this == coordinate) {
+            return true;
+        }
+        if (coordinate == null) {
+            return false;
+        }
+
+        SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
+
+        return areDoublesEqual(this.latitude, otherCoordinate.latitude)
+                && areDoublesEqual(this.longitude, otherCoordinate.longitude )
+                && areDoublesEqual(this.radius, otherCoordinate.radius);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(latitude, longitude, radius);
+    }
+
+    @Override
     public CartesianCoordinate asCartesianCoordinate() {
 
         double latitudeAsRadian = Math.toRadians(this.getLatitude());
@@ -107,11 +127,6 @@ public class SphericCoordinate extends AbstractCoordinate {
     public double getCartesianDistance(Coordinate coordinate) {
 
         return this.asCartesianCoordinate().getCartesianDistance(coordinate);
-    }
-
-    @Override
-    public double getDistance(Coordinate coordinate) {
-        return this.asCartesianCoordinate().getDistance(coordinate);
     }
 
 
@@ -144,32 +159,6 @@ public class SphericCoordinate extends AbstractCoordinate {
         return this;
     }
 
-    @Override
-    public boolean isEqual(Coordinate coordinate) {
-
-        if (this == coordinate) {
-            return true;
-        }
-        if (coordinate == null) {
-            return false;
-        }
-
-        SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
-        return Double.compare(otherCoordinate.latitude, this.latitude) == 0 &&
-                Double.compare(otherCoordinate.longitude, this.longitude) == 0 &&
-                Double.compare(otherCoordinate.radius, this.radius) == 0;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-
-        return other instanceof Coordinate && this.isEqual((Coordinate)other);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(latitude, longitude, radius);
-    }
 
     /**
      * Checks if this Coordinate and the given one have the same radius
@@ -177,7 +166,7 @@ public class SphericCoordinate extends AbstractCoordinate {
      * @param otherCoordinate coordinate to be compared to
      */
     private void assertSameRadius (SphericCoordinate otherCoordinate) {
-        if (this.getRadius() - otherCoordinate.getRadius() > DOUBLE_COMPARISON_DELTA) {
+        if (!areDoublesEqual(this.getRadius(), otherCoordinate.getRadius())) {
             throw new IllegalArgumentException("Unable to compare coordinates on different spheres");
         }
     }
