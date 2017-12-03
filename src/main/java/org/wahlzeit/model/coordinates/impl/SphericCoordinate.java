@@ -68,6 +68,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 
     public void setLatitude(double latitude) {
 
+        assert !(Double.isNaN(latitude));
         this.assertClassInvariants();
 
         if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
@@ -84,7 +85,9 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     public void setLongitude(double longitude) {
+        assert !(Double.isNaN(longitude));
         this.assertClassInvariants();
+
         if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
             throw new IllegalArgumentException("Longitude must be between -180 and 180");
         }
@@ -98,6 +101,7 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     public void setRadius(double radius) {
+        assert !(Double.isNaN(radius));
         assert !(radius < 0);
 
         this.assertClassInvariants();
