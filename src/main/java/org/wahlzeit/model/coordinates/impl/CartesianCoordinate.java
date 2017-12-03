@@ -39,6 +39,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
         this.x = x;
         this.y = y;
         this.z = z;
+
+        assertClassInvariants();
     }
 
 
@@ -46,6 +48,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @return x value of the current coordinate
      */
     public double getX() {
+        this.assertClassInvariants();
         return x;
     }
 
@@ -53,7 +56,12 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param x the new x value of the current coordinate
      */
     public void setX(double x) {
+
+        assert !(Double.isNaN(x));
+        this.assertClassInvariants();
         this.x = x;
+        this.assertClassInvariants();
+
     }
 
 
@@ -61,6 +69,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @return y value of the current coordinate
      */
     public double getY() {
+        this.assertClassInvariants();
         return y;
     }
 
@@ -68,13 +77,17 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param y the new y value of the current coordinate
      */
     public void setY(double y) {
+        assert !(Double.isNaN(y));
+        this.assertClassInvariants();
         this.y = y;
+        this.assertClassInvariants();
     }
 
     /**
      * @return z value of the current coordinate
      */
     public double getZ() {
+        this.assertClassInvariants();
         return z;
     }
 
@@ -82,7 +95,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param z the new z value of the current coordinate
      */
     public void setZ(double z) {
+        assert !(Double.isNaN(z));
+        this.assertClassInvariants();
         this.z = z;
+        this.assertClassInvariants();
     }
 
     /**
@@ -93,6 +109,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      */
     public boolean isEqual(Coordinate coordinate) {
 
+        this.assertClassInvariants();
         if (this == coordinate) {
             return true;
         }
@@ -101,6 +118,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
         }
 
         CartesianCoordinate otherCoordinate = coordinate.asCartesianCoordinate();
+
         return areDoublesEqual( this.getX(), otherCoordinate.getX() )
                 && areDoublesEqual( this.getY(), otherCoordinate.getY() )
                 && areDoublesEqual( this.getZ(), otherCoordinate.getZ() );
@@ -121,6 +139,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
+        this.assertClassInvariants();
         return this;
     }
 
@@ -134,6 +153,8 @@ public class CartesianCoordinate extends AbstractCoordinate {
     @Override
     public double getCartesianDistance (Coordinate coordinate) {
 
+        this.assertClassInvariants();
+
         CartesianCoordinate toCartesian = coordinate.asCartesianCoordinate();
 
         return Math.sqrt(
@@ -145,6 +166,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
+        this.assertClassInvariants();
 
         double radius = Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getY(),2) + Math.pow(this.getZ(),2));
 
@@ -152,14 +174,30 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
         double latitude = Math.toDegrees(Math.atan(this.getY()/this.getX()));
 
-        return new SphericCoordinate(longitude,latitude,radius);
+        SphericCoordinate result = new SphericCoordinate(longitude,latitude,radius);
+
+        result.assertClassInvariants();
+
+        return result;
     }
 
     @Override
     public double getSphericDistance(Coordinate coordinate) {
+        this.assertClassInvariants();
 
         return this.asSphericCoordinate().getSphericDistance(coordinate.asSphericCoordinate());
     }
+
+
+    protected void assertClassInvariants() {
+        assert (this!= null);
+
+        assert !Double.isNaN(this.x);
+        assert !Double.isNaN(this.y);
+        assert !Double.isNaN(this.z);
+
+    }
+
 
 
 }

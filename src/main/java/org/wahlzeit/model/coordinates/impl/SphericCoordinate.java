@@ -41,9 +41,12 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     public SphericCoordinate(double longitude, double latitude, double radius) {
+
         this.setLatitude(latitude);
         this.setLongitude(longitude);
         this.setRadius(radius);
+
+        assertClassInvariants();
     }
 
     /**
@@ -58,33 +61,48 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     public double getLatitude() {
+
+        this.assertClassInvariants();
         return latitude;
     }
 
     public void setLatitude(double latitude) {
+
+        this.assertClassInvariants();
+
         if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
             throw new IllegalArgumentException("Latitude must be between -90 and 90");
         }
         this.latitude = latitude;
+
+        this.assertClassInvariants();
     }
 
     public double getLongitude() {
+        this.assertClassInvariants();
         return longitude;
     }
 
     public void setLongitude(double longitude) {
+        this.assertClassInvariants();
         if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
             throw new IllegalArgumentException("Longitude must be between -180 and 180");
         }
         this.longitude = longitude;
+        this.assertClassInvariants();
     }
 
     public double getRadius() {
+        this.assertClassInvariants();
         return radius;
     }
 
     public void setRadius(double radius) {
+        assert !(radius < 0);
+
+        this.assertClassInvariants();
         this.radius = radius;
+        this.assertClassInvariants();
     }
 
     @Override
@@ -112,6 +130,8 @@ public class SphericCoordinate extends AbstractCoordinate {
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
 
+        this.assertClassInvariants();
+
         double latitudeAsRadian = Math.toRadians(this.getLatitude());
         double longitudeAsRadian = Math.toRadians(this.getLongitude());
 
@@ -119,12 +139,17 @@ public class SphericCoordinate extends AbstractCoordinate {
         double y = radius * Math.sin(longitudeAsRadian) * Math.sin(latitudeAsRadian);
         double z = radius * Math.cos(longitudeAsRadian);
 
-        return new CartesianCoordinate(x,y,z);
+        CartesianCoordinate result = new CartesianCoordinate(x,y,z);
+
+        result.assertClassInvariants();
+
+        return result;
 
     }
 
     @Override
     public double getCartesianDistance(Coordinate coordinate) {
+        this.assertClassInvariants();
 
         return this.asCartesianCoordinate().getCartesianDistance(coordinate);
     }
@@ -138,8 +163,10 @@ public class SphericCoordinate extends AbstractCoordinate {
     @Override
     public double getSphericDistance(Coordinate coordinate) {
 
-       SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
-       assertSameRadius(otherCoordinate);
+        this.assertClassInvariants();
+        SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
+
+        assertSameRadius(otherCoordinate);
 
         double thisLatitudeAsRadian = Math.toRadians(this.getLatitude());
         double thisLongitudeAsRadian = Math.toRadians(this.getLongitude());
@@ -156,6 +183,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
+        this.assertClassInvariants();
         return this;
     }
 
@@ -169,5 +197,23 @@ public class SphericCoordinate extends AbstractCoordinate {
         if (!areDoublesEqual(this.getRadius(), otherCoordinate.getRadius())) {
             throw new IllegalArgumentException("Unable to compare coordinates on different spheres");
         }
+    }
+
+
+    protected void assertClassInvariants() {
+        assert !(this== null);
+
+        assert !(Double.isNaN(this.latitude));
+        assert !(Double.isNaN(this.longitude));
+        assert !(Double.isNaN(this.radius));
+
+        assert !(this.latitude < MIN_LATITUDE);
+        assert !(this.latitude > MAX_LATITUDE);
+
+        assert !(this.longitude < MIN_LONGITUDE);
+        assert !(this.longitude > MAX_LATITUDE);
+
+        assert !(this.radius < 0);
+
     }
 }
