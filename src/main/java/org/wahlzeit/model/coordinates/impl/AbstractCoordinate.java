@@ -72,4 +72,12 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     @Override
     public abstract boolean isEqual(Coordinate coordinate);
+
+    protected abstract void assertClassInvariants();
+
+    protected void assertIsNonNullCoordinate (Coordinate coordinate) throws IllegalArgumentException {
+        if (coordinate == null) {
+            throw new IllegalArgumentException("The coordinate passed to the method was null");
+        }
+    }
 }

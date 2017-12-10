@@ -40,7 +40,7 @@ public class SphericCoordinate extends AbstractCoordinate {
     public SphericCoordinate() {
     }
 
-    public SphericCoordinate(double longitude, double latitude, double radius) {
+    public SphericCoordinate(double longitude, double latitude, double radius) throws IllegalArgumentException {
 
         this.setLatitude(latitude);
         this.setLongitude(longitude);
@@ -58,6 +58,8 @@ public class SphericCoordinate extends AbstractCoordinate {
         this.setLatitude(latitude);
         this.setLongitude(longitude);
         this.radius = EARTH_RADIUS_IN_METERS;
+
+        assertClassInvariants();
     }
 
     public double getLatitude() {
@@ -65,17 +67,21 @@ public class SphericCoordinate extends AbstractCoordinate {
         this.assertClassInvariants();
         return latitude;
     }
+    /**
+     * @param latitude the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
+     */
+    public void setLatitude(double latitude) throws IllegalArgumentException {
 
-    public void setLatitude(double latitude) {
+        if (Double.isNaN(latitude)){
+            throw new IllegalArgumentException("Parameter latitude is not a valid double (NaN)");
+        }
 
-        assert !(Double.isNaN(latitude));
         this.assertClassInvariants();
-
         if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
             throw new IllegalArgumentException("Latitude must be between -90 and 90");
         }
         this.latitude = latitude;
-
         this.assertClassInvariants();
     }
 
@@ -83,9 +89,15 @@ public class SphericCoordinate extends AbstractCoordinate {
         this.assertClassInvariants();
         return longitude;
     }
+    /**
+     * @param longitude the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
+     */
+    public void setLongitude(double longitude) throws IllegalArgumentException {
 
-    public void setLongitude(double longitude) {
-        assert !(Double.isNaN(longitude));
+        if (Double.isNaN(latitude)){
+            throw new IllegalArgumentException("Parameter longitude is not a valid double (NaN)");
+        }
         this.assertClassInvariants();
 
         if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
@@ -100,23 +112,28 @@ public class SphericCoordinate extends AbstractCoordinate {
         return radius;
     }
 
-    public void setRadius(double radius) {
-        assert !(Double.isNaN(radius));
-        assert !(radius < 0);
+    /**
+     * @param radius the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
+     */
+    public void setRadius(double radius) throws IllegalArgumentException {
+        if (Double.isNaN(radius)){
+            throw new IllegalArgumentException("Parameter radius is not a valid double (NaN)");
+        }
 
-        this.assertClassInvariants();
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius must not be smaller than zero!");
+        }
+
         this.radius = radius;
         this.assertClassInvariants();
     }
 
     @Override
-    public boolean isEqual(Coordinate coordinate) {
-
+    public boolean isEqual(Coordinate coordinate) throws IllegalArgumentException {
+        assertIsNonNullCoordinate(coordinate);
         if (this == coordinate) {
             return true;
-        }
-        if (coordinate == null) {
-            return false;
         }
 
         SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
@@ -150,9 +167,15 @@ public class SphericCoordinate extends AbstractCoordinate {
         return result;
 
     }
-
+    /**
+     * Calculates the cartesian distance between two coordinates
+     * @param coordinate
+     * @return the spheric cartesian between the two coordinates
+     * @throws IllegalArgumentException if the Coordinate passed is null
+     */
     @Override
-    public double getCartesianDistance(Coordinate coordinate) {
+    public double getCartesianDistance(Coordinate coordinate) throws IllegalArgumentException {
+        assertIsNonNullCoordinate(coordinate);
         this.assertClassInvariants();
 
         return this.asCartesianCoordinate().getCartesianDistance(coordinate);
@@ -162,14 +185,16 @@ public class SphericCoordinate extends AbstractCoordinate {
     /**
      * Calculates the spheric distance between two coordinates
      * @param coordinate
-     * @return The spheric distance between two coordinates in m
+     * @return the spheric distance between the two coordinates
+     * @throws IllegalArgumentException if the coordinate passed is null or the two coordinates are on different spheres
      */
     @Override
-    public double getSphericDistance(Coordinate coordinate) {
+    public double getSphericDistance(Coordinate coordinate) throws IllegalArgumentException {
 
+        assertIsNonNullCoordinate(coordinate);
         this.assertClassInvariants();
-        SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
 
+        SphericCoordinate otherCoordinate = coordinate.asSphericCoordinate();
         assertSameRadius(otherCoordinate);
 
         double thisLatitudeAsRadian = Math.toRadians(this.getLatitude());
@@ -197,7 +222,7 @@ public class SphericCoordinate extends AbstractCoordinate {
      * @methodtype assertion
      * @param otherCoordinate coordinate to be compared to
      */
-    private void assertSameRadius (SphericCoordinate otherCoordinate) {
+    private void assertSameRadius (SphericCoordinate otherCoordinate) throws IllegalArgumentException {
         if (!areDoublesEqual(this.getRadius(), otherCoordinate.getRadius())) {
             throw new IllegalArgumentException("Unable to compare coordinates on different spheres");
         }
@@ -205,7 +230,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 
 
     protected void assertClassInvariants() {
-        assert !(this== null);
+        assertIsNonNullCoordinate(this);
 
         assert !(Double.isNaN(this.latitude));
         assert !(Double.isNaN(this.longitude));

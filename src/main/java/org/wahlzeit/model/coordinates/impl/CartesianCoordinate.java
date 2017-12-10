@@ -34,13 +34,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     private double y;
     private double z;
 
-    public CartesianCoordinate(double x, double y, double z) {
+    public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
 
-        this.x = x;
-        this.y = y;
-        this.z = z;
-
-        assertClassInvariants();
+        this.setX(x);
+        this.setY(y);
+        this.setZ(z);
     }
 
 
@@ -52,13 +50,17 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return x;
     }
 
+
     /**
      * @param x the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
      */
-    public void setX(double x) {
+    public void setX(double x) throws IllegalArgumentException {
 
-        assert !(Double.isNaN(x));
-        this.assertClassInvariants();
+        if (Double.isNaN(x)){
+            throw new IllegalArgumentException("Parameter x is not a valid double (NaN)");
+        }
+
         this.x = x;
         this.assertClassInvariants();
 
@@ -74,11 +76,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
-     * @param y the new y value of the current coordinate
+     * @param y the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
      */
-    public void setY(double y) {
-        assert !(Double.isNaN(y));
-        this.assertClassInvariants();
+    public void setY(double y) throws IllegalArgumentException {
+
+        if (Double.isNaN(y)){
+            throw new IllegalArgumentException("Parameter y is not a valid double (NaN)");
+        }
+
         this.y = y;
         this.assertClassInvariants();
     }
@@ -92,11 +98,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
-     * @param z the new z value of the current coordinate
+     * @param z the new x value of the current coordinate
+     * @throws IllegalArgumentException if the parameter passed is not a valid double
      */
-    public void setZ(double z) {
-        assert !(Double.isNaN(z));
-        this.assertClassInvariants();
+    public void setZ(double z) throws IllegalArgumentException {
+
+        if (Double.isNaN(z)){
+            throw new IllegalArgumentException("Parameter z is not a valid double (NaN)");
+        }
+
         this.z = z;
         this.assertClassInvariants();
     }
@@ -107,14 +117,13 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param coordinate
      * @return true if all attributes are equal and other coordinate is not null
      */
-    public boolean isEqual(Coordinate coordinate) {
+    public boolean isEqual(Coordinate coordinate) throws IllegalArgumentException {
 
         this.assertClassInvariants();
+        assertIsNonNullCoordinate(coordinate);
+
         if (this == coordinate) {
             return true;
-        }
-        if (coordinate == null) {
-            return false;
         }
 
         CartesianCoordinate otherCoordinate = coordinate.asCartesianCoordinate();
@@ -138,7 +147,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     @Override
-    public CartesianCoordinate asCartesianCoordinate() {
+    public CartesianCoordinate asCartesianCoordinate() throws IllegalArgumentException {
         this.assertClassInvariants();
         return this;
     }
@@ -151,17 +160,21 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @return direct distance between two coordinates
      */
     @Override
-    public double getCartesianDistance (Coordinate coordinate) {
+    public double getCartesianDistance (Coordinate coordinate) throws IllegalArgumentException {
 
+        assertIsNonNullCoordinate(coordinate);
         this.assertClassInvariants();
 
         CartesianCoordinate toCartesian = coordinate.asCartesianCoordinate();
 
-        return Math.sqrt(
+        double result;
+        result = Math.sqrt(
                 Math.pow(toCartesian.x - this.x, 2.0) +
                         Math.pow(toCartesian.y - this.y, 2.0) +
                         Math.pow(toCartesian.z - this.z, 2.0)
         );
+        assert (result >= 0);
+        return result;
     }
 
     @Override
@@ -169,20 +182,19 @@ public class CartesianCoordinate extends AbstractCoordinate {
         this.assertClassInvariants();
 
         double radius = Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getY(),2) + Math.pow(this.getZ(),2));
-
         double longitude = Math.toDegrees(Math.acos(this.getZ()/radius));
-
         double latitude = Math.toDegrees(Math.atan(this.getY()/this.getX()));
 
         SphericCoordinate result = new SphericCoordinate(longitude,latitude,radius);
 
         result.assertClassInvariants();
-
         return result;
     }
 
     @Override
-    public double getSphericDistance(Coordinate coordinate) {
+    public double getSphericDistance(Coordinate coordinate) throws IllegalArgumentException {
+
+        assertIsNonNullCoordinate(coordinate);
         this.assertClassInvariants();
 
         return this.asSphericCoordinate().getSphericDistance(coordinate.asSphericCoordinate());
@@ -190,14 +202,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
 
     protected void assertClassInvariants() {
-        assert (this!= null);
+        assertIsNonNullCoordinate(this);
 
         assert !Double.isNaN(this.x);
         assert !Double.isNaN(this.y);
         assert !Double.isNaN(this.z);
-
     }
-
-
-
 }

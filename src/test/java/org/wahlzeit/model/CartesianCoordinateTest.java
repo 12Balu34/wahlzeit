@@ -98,8 +98,8 @@ public class CartesianCoordinateTest {
         Assert.assertFalse(coord6.isEqual(coord5));
     }
 
-    @Test
-    public void isEqualComparingToNullCoordinateShouldReturnFalse() {
+    @Test (expected = IllegalArgumentException.class)
+    public void isEqualComparingToNullCoordinate_ShouldThrowException() throws Exception {
 
         Assert.assertNotNull(coord1);
         Assert.assertFalse(coord1.isEqual(nullCoord));
@@ -185,4 +185,11 @@ public class CartesianCoordinateTest {
 
         Assert.assertEquals(cartesian.getDistance(spheric), spheric.getDistance(cartesian), 0);
     }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void createCartesianCoordinateWithInvalidParameters_ShouldThrowException() throws Exception {
+        CartesianCoordinate cartesian = new CartesianCoordinate(Math.sqrt(-1), 1, 2);
+    }
+
+
 }
