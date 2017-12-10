@@ -178,7 +178,8 @@ public class MainServlet extends AbstractServlet {
 				}
 			}
 		} catch (Exception ex) {
-			throw new ServletException(ex);
+			log.config(LogBuilder.createSystemMessage().addException("Tried to upload photo without selecting file", new ServletException(ex)).toString());
+			//throw new ServletException(ex);
 		}
 
 		return result;
