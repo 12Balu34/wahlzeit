@@ -22,9 +22,12 @@ package org.wahlzeit.model.coordinates.impl;
 
 import org.wahlzeit.model.coordinates.Coordinate;
 
+import java.util.HashMap;
+
 public abstract class AbstractCoordinate implements Coordinate {
 
     protected static final double DOUBLE_COMPARISON_DELTA = 1e-6;
+
 
     /**
      * Delegates the equals method to isEqual () if the Object

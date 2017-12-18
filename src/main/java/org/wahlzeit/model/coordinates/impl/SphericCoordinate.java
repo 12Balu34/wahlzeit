@@ -22,31 +22,33 @@ package org.wahlzeit.model.coordinates.impl;
 
 import org.wahlzeit.model.coordinates.Coordinate;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class SphericCoordinate extends AbstractCoordinate {
 
-    private double latitude;
-    private double longitude;
-    private double radius;
+    private final double latitude;
+    private final double longitude;
+    private final double radius;
 
     private static final double EARTH_RADIUS_IN_METERS = 6_378_388;
     private static final double MAX_LATITUDE = 90;
     private static final double MIN_LATITUDE = - 90;
     private static final double MAX_LONGITUDE = 180;
     private static final double MIN_LONGITUDE = - 180;
+    private static final HashMap <Integer, SphericCoordinate> sphericCoordinateInstances = new HashMap <> ();
 
+    private SphericCoordinate(double longitude, double latitude, double radius) throws IllegalArgumentException {
 
-    public SphericCoordinate() {
-    }
+       assertIsValidLatitude(latitude);
+       assertIsValidLongitude(longitude);
+       assertIsValidRadius(radius);
 
-    public SphericCoordinate(double longitude, double latitude, double radius) throws IllegalArgumentException {
+       this.longitude = longitude;
+       this.latitude = latitude;
+       this.radius = radius;
 
-        this.setLatitude(latitude);
-        this.setLongitude(longitude);
-        this.setRadius(radius);
-
-        assertClassInvariants();
+       assertClassInvariants();
     }
 
     /**
@@ -54,12 +56,32 @@ public class SphericCoordinate extends AbstractCoordinate {
      * @param latitude The latitude of the new SphericCoordinate in degrees
      * @param longitude The latitude of the new SphericCoordinate in degrees
      */
-    public SphericCoordinate(double longitude, double latitude) {
-        this.setLatitude(latitude);
-        this.setLongitude(longitude);
+    private SphericCoordinate(double longitude, double latitude) throws IllegalArgumentException {
+
+        assertIsValidLatitude(latitude);
+        assertIsValidLongitude(longitude);
+
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.radius = EARTH_RADIUS_IN_METERS;
 
         assertClassInvariants();
+
+    }
+
+    public static synchronized SphericCoordinate getSphericCoordinateInstance(double longitude, double latitude) {
+        return getSphericCoordinateInstance(longitude, latitude, EARTH_RADIUS_IN_METERS);
+    }
+
+    public static synchronized SphericCoordinate getSphericCoordinateInstance(double longitude, double latitude, double radius) {
+        SphericCoordinate instanceCandidate = new SphericCoordinate(longitude,latitude,radius);
+        SphericCoordinate instance = sphericCoordinateInstances.get(instanceCandidate.hashCode());
+
+        if (instance == null) {
+            sphericCoordinateInstances.put(instanceCandidate.hashCode(),instanceCandidate);
+            instance = instanceCandidate;
+        }
+        return instance;
     }
 
     public double getLatitude() {
@@ -67,66 +89,15 @@ public class SphericCoordinate extends AbstractCoordinate {
         this.assertClassInvariants();
         return latitude;
     }
-    /**
-     * @param latitude the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setLatitude(double latitude) throws IllegalArgumentException {
-
-        if (Double.isNaN(latitude)){
-            throw new IllegalArgumentException("Parameter latitude is not a valid double (NaN)");
-        }
-
-        this.assertClassInvariants();
-        if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
-            throw new IllegalArgumentException("Latitude must be between -90 and 90");
-        }
-        this.latitude = latitude;
-        this.assertClassInvariants();
-    }
 
     public double getLongitude() {
         this.assertClassInvariants();
         return longitude;
     }
-    /**
-     * @param longitude the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setLongitude(double longitude) throws IllegalArgumentException {
-
-        if (Double.isNaN(latitude)){
-            throw new IllegalArgumentException("Parameter longitude is not a valid double (NaN)");
-        }
-        this.assertClassInvariants();
-
-        if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
-            throw new IllegalArgumentException("Longitude must be between -180 and 180");
-        }
-        this.longitude = longitude;
-        this.assertClassInvariants();
-    }
 
     public double getRadius() {
         this.assertClassInvariants();
         return radius;
-    }
-
-    /**
-     * @param radius the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setRadius(double radius) throws IllegalArgumentException {
-        if (Double.isNaN(radius)){
-            throw new IllegalArgumentException("Parameter radius is not a valid double (NaN)");
-        }
-
-        if (radius < 0) {
-            throw new IllegalArgumentException("Radius must not be smaller than zero!");
-        }
-
-        this.radius = radius;
-        this.assertClassInvariants();
     }
 
     @Override
@@ -160,7 +131,7 @@ public class SphericCoordinate extends AbstractCoordinate {
         double y = radius * Math.sin(longitudeAsRadian) * Math.sin(latitudeAsRadian);
         double z = radius * Math.cos(longitudeAsRadian);
 
-        CartesianCoordinate result = new CartesianCoordinate(x,y,z);
+        CartesianCoordinate result = CartesianCoordinate.getCartesianCoordinateInstance(x,y,z);
 
         result.assertClassInvariants();
 
@@ -229,20 +200,39 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
 
-    protected void assertClassInvariants() {
+    protected void assertClassInvariants() throws IllegalArgumentException{
         assertIsNonNullCoordinate(this);
-
-        assert !(Double.isNaN(this.latitude));
-        assert !(Double.isNaN(this.longitude));
-        assert !(Double.isNaN(this.radius));
-
-        assert !(this.latitude < MIN_LATITUDE);
-        assert !(this.latitude > MAX_LATITUDE);
-
-        assert !(this.longitude < MIN_LONGITUDE);
-        assert !(this.longitude > MAX_LATITUDE);
-
-        assert !(this.radius < 0);
+        assertIsValidLatitude(this.latitude);
+        assertIsValidLongitude(this.longitude);
+        assertIsValidRadius(this.radius);
 
     }
+
+    private void assertIsValidLongitude(Double longitude) throws IllegalArgumentException {
+        if (Double.isNaN(longitude)){
+            throw new IllegalArgumentException("Parameter longitude is not a valid double (NaN)");
+        }
+        if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
+            throw new IllegalArgumentException("Longitude must be between -180 and 180");
+        }
+    }
+    private void assertIsValidLatitude(Double latitude) throws IllegalArgumentException {
+        if (Double.isNaN(latitude)) {
+            throw new IllegalArgumentException("Parameter latitude is not a valid double (NaN)");
+        }
+        if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
+            throw new IllegalArgumentException("Latitude must be between -90 and 90");
+        }
+    }
+
+    private void assertIsValidRadius(Double radius) throws IllegalArgumentException {
+        if (Double.isNaN(radius)){
+            throw new IllegalArgumentException("Parameter radius is not a valid double (NaN)");
+        }
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius must not be smaller than zero!");
+        }
+    }
+
+
 }

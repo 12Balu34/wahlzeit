@@ -46,13 +46,13 @@ public class CartesianCoordinateTest {
 
         nullObject = null;
         nullCoord = null;
-        coord1 = new CartesianCoordinate(0.0, 0.0, 0.0);
-        coord2 = new CartesianCoordinate(0.0, 0.0, 0.0);
-        coord3 = new CartesianCoordinate(1.0, 1.0, 1.0);
-        coord4 = new CartesianCoordinate(-10298, -676537.9876, 7865);
-        coord5 = new CartesianCoordinate(-10298, -676537.9876, 7865);
-        coord6 = new CartesianCoordinate(10298, 676537.9876, -7865);
-        coord7 = new CartesianCoordinate(67, -98789, 5.0);
+        coord1 = CartesianCoordinate.getCartesianCoordinateInstance(0.0, 0.0, 0.0);
+        coord2 = CartesianCoordinate.getCartesianCoordinateInstance(0.0, 0.0, 0.0);
+        coord3 = CartesianCoordinate.getCartesianCoordinateInstance(1.0, 1.0, 1.0);
+        coord4 = CartesianCoordinate.getCartesianCoordinateInstance(-10298, -676537.9876, 7865);
+        coord5 = CartesianCoordinate.getCartesianCoordinateInstance(-10298, -676537.9876, 7865);
+        coord6 = CartesianCoordinate.getCartesianCoordinateInstance(10298, 676537.9876, -7865);
+        coord7 = CartesianCoordinate.getCartesianCoordinateInstance(67, -98789, 5.0);
     }
 
 
@@ -151,9 +151,9 @@ public class CartesianCoordinateTest {
     @Test
     public void asSphericCoordinate_shouldReturnTrue() throws Exception {
         double deltaValue = 0.01;
-        CartesianCoordinate cartesian = new CartesianCoordinate(98,-9890,9891823);
+        CartesianCoordinate cartesian = CartesianCoordinate.getCartesianCoordinateInstance(98,-9890,9891823);
         //source: http://www.learningaboutelectronics.com/Articles/Cartesian-rectangular-to-spherical-coordinate-converter-calculator.php#answer
-        SphericCoordinate spheric = new SphericCoordinate(0.06, -89.43, 9_891_827.94 );
+        SphericCoordinate spheric = SphericCoordinate.getSphericCoordinateInstance(0.06, -89.43, 9_891_827.94 );
         Assert.assertEquals(cartesian.asSphericCoordinate().getRadius(), spheric.getRadius(), deltaValue);
         Assert.assertEquals(cartesian.asSphericCoordinate().getLongitude(), spheric.getLongitude(), deltaValue);
         Assert.assertEquals(cartesian.asSphericCoordinate().getLatitude(), spheric.getLatitude(), deltaValue);
@@ -164,7 +164,7 @@ public class CartesianCoordinateTest {
     @Test
     public void isEqualComparingReconvertedCartesianCoordinate_shouldReturnTrue() throws Exception {
 
-        CartesianCoordinate cartesian = new CartesianCoordinate(98,-9890,9891823);
+        CartesianCoordinate cartesian = CartesianCoordinate.getCartesianCoordinateInstance(98,-9890,9891823);
         SphericCoordinate spheric = cartesian.asSphericCoordinate();
         CartesianCoordinate cartesianReconverted = spheric.asCartesianCoordinate();
         Assert.assertEquals(cartesianReconverted, cartesian);
@@ -172,23 +172,23 @@ public class CartesianCoordinateTest {
 
     @Test
     public void getDistanceOfCartesianAndSpheric_shouldReturn6378885_810032() throws Exception {
-        CartesianCoordinate cartesian = new CartesianCoordinate(18,656,987);
-        SphericCoordinate spheric = new SphericCoordinate(45,-75);
+        CartesianCoordinate cartesian = CartesianCoordinate.getCartesianCoordinateInstance(18,656,987);
+        SphericCoordinate spheric = SphericCoordinate.getSphericCoordinateInstance(45,-75);
 
         cartesian.getCartesianDistance(spheric);
     }
 
     @Test
     public void getDistance_shouldBehaveEqually() throws Exception {
-        CartesianCoordinate cartesian = new CartesianCoordinate(18,656,987);
-        SphericCoordinate spheric = new SphericCoordinate(45,-75);
+        CartesianCoordinate cartesian = CartesianCoordinate.getCartesianCoordinateInstance(18,656,987);
+        SphericCoordinate spheric = SphericCoordinate.getSphericCoordinateInstance(45,-75);
 
         Assert.assertEquals(cartesian.getDistance(spheric), spheric.getDistance(cartesian), 0);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void createCartesianCoordinateWithInvalidParameters_ShouldThrowException() throws Exception {
-        CartesianCoordinate cartesian = new CartesianCoordinate(Math.sqrt(-1), 1, 2);
+        CartesianCoordinate cartesian = CartesianCoordinate.getCartesianCoordinateInstance(Math.sqrt(-1), 1, 2);
     }
 
 

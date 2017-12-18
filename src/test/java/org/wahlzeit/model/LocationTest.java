@@ -40,13 +40,13 @@ public class LocationTest {
     @Before
     public void setUp() {
         //different objects witch same coordinates
-        cartesianLocation1 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
-        cartesianLocation2 = new Location(new CartesianCoordinate(1.0, 45.0, 33.0));
+        cartesianLocation1 = new Location(CartesianCoordinate.getCartesianCoordinateInstance(1.0, 45.0, 33.0));
+        cartesianLocation2 = new Location(CartesianCoordinate.getCartesianCoordinateInstance(1.0, 45.0, 33.0));
 
-        sphericLocation1 = new Location(new SphericCoordinate(67, 78 ));
-        sphericLocation2 = new Location(new SphericCoordinate(67, 78 ));
+        sphericLocation1 = new Location(SphericCoordinate.getSphericCoordinateInstance(67, 78 ));
+        sphericLocation2 = new Location(SphericCoordinate.getSphericCoordinateInstance(67, 78 ));
 
-        sphericLocation1 = new Location(new CartesianCoordinate(9.0, -9087656241.987, 42));
+        sphericLocation1 = new Location(CartesianCoordinate.getCartesianCoordinateInstance(9.0, -9087656241.987, 42));
         genericObject = new Object();
     }
 

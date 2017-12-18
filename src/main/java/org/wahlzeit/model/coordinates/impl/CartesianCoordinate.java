@@ -23,6 +23,8 @@ package org.wahlzeit.model.coordinates.impl;
 
 import org.wahlzeit.model.coordinates.Coordinate;
 
+import java.util.HashMap;
+
 /**
  * Class representing a three dimensional Cartesian coordinate.
  *
@@ -30,15 +32,28 @@ import org.wahlzeit.model.coordinates.Coordinate;
  */
 public class CartesianCoordinate extends AbstractCoordinate {
 
-    private double x;
-    private double y;
-    private double z;
+    private final double x;
+    private final double y;
+    private final double z;
+    private static final HashMap<Integer, CartesianCoordinate> cartesianCoordinateInstances = new HashMap <> ();
 
-    public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
 
-        this.setX(x);
-        this.setY(y);
-        this.setZ(z);
+    private CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
+
+        if (Double.isNaN(x)){
+            throw new IllegalArgumentException("Parameter x is not a valid double (NaN)");
+        }
+        if (Double.isNaN(y)){
+            throw new IllegalArgumentException("Parameter y is not a valid double (NaN)");
+        }
+        if (Double.isNaN(z)){
+            throw new IllegalArgumentException("Parameter z is not a valid double (NaN)");
+        }
+
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.assertClassInvariants();
     }
 
 
@@ -50,23 +65,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return x;
     }
 
-
-    /**
-     * @param x the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setX(double x) throws IllegalArgumentException {
-
-        if (Double.isNaN(x)){
-            throw new IllegalArgumentException("Parameter x is not a valid double (NaN)");
-        }
-
-        this.x = x;
-        this.assertClassInvariants();
-
-    }
-
-
     /**
      * @return y value of the current coordinate
      */
@@ -76,39 +74,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
-     * @param y the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setY(double y) throws IllegalArgumentException {
-
-        if (Double.isNaN(y)){
-            throw new IllegalArgumentException("Parameter y is not a valid double (NaN)");
-        }
-
-        this.y = y;
-        this.assertClassInvariants();
-    }
-
-    /**
      * @return z value of the current coordinate
      */
     public double getZ() {
         this.assertClassInvariants();
         return z;
-    }
-
-    /**
-     * @param z the new x value of the current coordinate
-     * @throws IllegalArgumentException if the parameter passed is not a valid double
-     */
-    public void setZ(double z) throws IllegalArgumentException {
-
-        if (Double.isNaN(z)){
-            throw new IllegalArgumentException("Parameter z is not a valid double (NaN)");
-        }
-
-        this.z = z;
-        this.assertClassInvariants();
     }
 
     /**
@@ -185,7 +155,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
         double longitude = Math.toDegrees(Math.acos(this.getZ()/radius));
         double latitude = Math.toDegrees(Math.atan(this.getY()/this.getX()));
 
-        SphericCoordinate result = new SphericCoordinate(longitude,latitude,radius);
+        SphericCoordinate result = SphericCoordinate.getSphericCoordinateInstance(longitude, latitude, radius);
 
         result.assertClassInvariants();
         return result;
@@ -207,5 +177,23 @@ public class CartesianCoordinate extends AbstractCoordinate {
         assert !Double.isNaN(this.x);
         assert !Double.isNaN(this.y);
         assert !Double.isNaN(this.z);
+    }
+
+    /**
+     * Returns a CartesianCoordinate instance with the given parameters
+     * @param x The x parameter of
+     * @param y
+     * @param z
+     * @return
+     */
+    public static synchronized CartesianCoordinate getCartesianCoordinateInstance (double x, double y, double z) {
+        CartesianCoordinate instanceCandidate = new CartesianCoordinate(x,y,z);
+        CartesianCoordinate instance = cartesianCoordinateInstances.get(instanceCandidate.hashCode());
+
+        if (instance == null) {
+            cartesianCoordinateInstances.put(instanceCandidate.hashCode(),instanceCandidate);
+            instance = instanceCandidate;
+        }
+        return instance;
     }
 }
