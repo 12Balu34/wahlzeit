@@ -26,6 +26,7 @@ import org.wahlzeit.services.EmailAddress;
 import org.wahlzeit.services.LogBuilder;
 import org.wahlzeit.services.mailing.EmailService;
 import org.wahlzeit.services.mailing.EmailServiceManager;
+import org.wahlzeit.utils.PatternInstance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-
+@PatternInstance(
+		patternName = "Singleton",
+		participants = {"UserManager"}
+)
 /**
  * The UserManager provides access to and manages Users (including Moderators and Administrators).
  */
