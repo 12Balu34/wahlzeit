@@ -3,7 +3,6 @@ package org.wahlzeit.model;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.wahlzeit.model.coordinates.impl.SphericCoordinate;
 import org.wahlzeit.model.persistence.PersistenceTestSuite;
 
 
@@ -21,9 +20,12 @@ import org.wahlzeit.model.persistence.PersistenceTestSuite;
         UserStatusTest.class,
         ValueTest.class,
         PersistenceTestSuite.class,
-        KanzlerPhotoTest.class,
+        KanzlerTest.class,
         KanzlerPhotoFactoryTest.class,
-        KanzlerPhotoManagerTest.class
+        KanzlerPhotoManagerTest.class,
+        KanzlerTest.class,
+        KanzlerManagerTest.class,
+        KanzlerTypeTest.class
 })
 
 public class ModelTestSuite {

@@ -32,13 +32,15 @@ import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 public class KanzlerPhotoManagerTest extends KanzlerDomainTest {
 
     private PhotoManager manager;
-    private KanzlerPhoto kanzler;
+    private Kanzler kanzler;
+    private KanzlerPhoto kanzlerPhoto;
 
     @Before
     public void setUp() throws Exception {
 
         manager = PhotoManager.getInstance();
-        kanzler = new KanzlerPhoto("Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
+        kanzler = new Kanzler(null, "Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
+        kanzlerPhoto = new KanzlerPhoto(kanzler);
     }
 
     @Test
@@ -51,14 +53,14 @@ public class KanzlerPhotoManagerTest extends KanzlerDomainTest {
 
     @Test
     public void testPersistence() throws Exception {
-        manager.addPhoto(kanzler);
-        KanzlerPhoto persistedKanzler = (KanzlerPhoto) manager.getPhoto(kanzler.id);
+        manager.addPhoto(kanzlerPhoto);
+        KanzlerPhoto persistedKanzler = (KanzlerPhoto) manager.getPhoto(kanzlerPhoto.id);
 
-        Assert.assertEquals(kanzler.getName(), persistedKanzler.getName());
-        Assert.assertEquals(kanzler.getYearOfBirth(), persistedKanzler.getYearOfBirth());
-        Assert.assertEquals(kanzler.getYearOfDeath(), persistedKanzler.getYearOfDeath());
-        Assert.assertEquals(kanzler.getYearEnteringOffice(), persistedKanzler.getYearEnteringOffice());
-        Assert.assertEquals(kanzler.getYearLeavingOffice(), persistedKanzler.getYearLeavingOffice());
-        Assert.assertEquals(kanzler.getParty(), persistedKanzler.getParty());
+        Assert.assertEquals(kanzler.getName(), persistedKanzler.getKanzler().getName());
+        Assert.assertEquals(kanzler.getYearOfBirth(), persistedKanzler.getKanzler().getYearOfBirth());
+        Assert.assertEquals(kanzler.getYearOfDeath(), persistedKanzler.getKanzler().getYearOfDeath());
+        Assert.assertEquals(kanzler.getYearEnteringOffice(), persistedKanzler.getKanzler().getYearEnteringOffice());
+        Assert.assertEquals(kanzler.getYearLeavingOffice(), persistedKanzler.getKanzler().getYearLeavingOffice());
+        Assert.assertEquals(kanzler.getParty(), persistedKanzler.getKanzler().getParty());
     }
 }

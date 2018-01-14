@@ -22,47 +22,34 @@ package org.wahlzeit.model;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
-import org.wahlzeit.testEnvironmentProvider.LocalDatastoreServiceTestConfigProvider;
-import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 
-public class KanzlerPhotoTest extends KanzlerDomainTest {
+public class KanzlerTest extends KanzlerDomainTest {
 
     Kanzler kanzler;
-    KanzlerPhoto kanzlerPhoto;
 
 
     @Before
     public void setUp() throws Exception {
-        kanzler = new Kanzler(null, "Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
-        kanzlerPhoto = new KanzlerPhoto(kanzler);
-    }
+        kanzler = new Kanzler(new KanzlerType("Test"), "Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
 
-    @Test
-    public void checkNotNullAfterInstantiation_emptyConstructor() throws Exception {
-
-        KanzlerPhoto kanzlerPhoto = new KanzlerPhoto();
-        Assert.assertNotNull(kanzlerPhoto);
     }
 
     @Test
     public void checkNotNullAfterInstantiation_fullConstructor() throws Exception {
 
-        Assert.assertNotNull(kanzlerPhoto);
+        Assert.assertNotNull(kanzler);
     }
 
     @Test
-    public void testGetter() throws Exception {
-        Assert.assertEquals(kanzlerPhoto.getKanzler(), kanzler);
-    }
+    public void testGetters() throws Exception {
 
-    @Test
-    public void testSetter() throws Exception {
-        KanzlerPhoto emptyPhoto = new KanzlerPhoto();
-        emptyPhoto.setKanzler(kanzler);
-        Assert.assertEquals(emptyPhoto.getKanzler(), kanzler);
+        Assert.assertTrue(kanzler.getType().getName() == "Test");
+        Assert.assertTrue(kanzler.getName() == "Helmut Schmidt");
+        Assert.assertTrue(kanzler.getParty() == "SPD");
+        Assert.assertTrue(kanzler.getYearEnteringOffice() == 1974);
+        Assert.assertTrue(kanzler.getYearLeavingOffice() == 1982);
+        Assert.assertTrue(kanzler.getYearOfBirth() == 1918);
+        Assert.assertTrue(kanzler.getYearOfDeath() == 2015);
     }
 }
