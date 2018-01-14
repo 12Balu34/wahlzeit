@@ -21,10 +21,15 @@
 package org.wahlzeit.model.coordinates.impl;
 
 import org.wahlzeit.model.coordinates.Coordinate;
+import org.wahlzeit.utils.PatternInstance;
 
 import java.util.HashMap;
 import java.util.Objects;
 
+@PatternInstance(
+        patternName = "Value Object",
+        participants = {"Spheric Coodinate"}
+)
 public class SphericCoordinate extends AbstractCoordinate {
 
     private final double latitude;

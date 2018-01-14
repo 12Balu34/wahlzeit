@@ -5,11 +5,6 @@ import org.wahlzeit.model.coordinates.impl.CartesianCoordinate;
 import org.wahlzeit.model.coordinates.impl.SphericCoordinate;
 import org.wahlzeit.utils.PatternInstance;
 
-@PatternInstance(
-        patternName = "Composite",
-        participants = {"Coordinate", "AbstractCoordinate", "CartesianCoordinate", "SphericCoordinate"}
-)
-
 public interface Coordinate {
 
     public CartesianCoordinate asCartesianCoordinate();
