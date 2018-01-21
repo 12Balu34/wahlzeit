@@ -40,7 +40,7 @@ public class KanzlerType extends DataObject{
      * @param superType
      * @methodtype set
      */
-    public void setSuperType(KanzlerType superType) {
+    private void setSuperType(KanzlerType superType) {
         this.superType = superType;
     }
 
@@ -56,7 +56,7 @@ public class KanzlerType extends DataObject{
      * Adds the kanzlerType passed to the method as a subType of this.
      * @param kanzlerType
      */
-    public void addSubType (KanzlerType kanzlerType) {
+    protected void addSubType(KanzlerType kanzlerType) {
         if (kanzlerType == null) {
             throw new IllegalArgumentException("Tried to add a null subtype");
         }
