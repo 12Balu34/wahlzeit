@@ -55,7 +55,7 @@ public class KanzlerManager extends ObjectManager {
     public Kanzler createKanzler (KanzlerType type, String name, int yearOfBirth, int yearOfDeath, int yearEnteringOffice, int yearLeavingOffice, String party) {
         assertIsValidType(type);
         if (existsKanzler(name)) {
-            throw new IllegalArgumentException("Kanzler/in " + name + " is already in the Map!");
+            return kanzlerMap.get(name);
         }
         if ( !(existsKanzlerType(type.getName())) ) {
             kanzlerTypeMap.put(type.getName(), type);
@@ -71,7 +71,7 @@ public class KanzlerManager extends ObjectManager {
      */
     public KanzlerType createKanzlerType (String typeName) {
        if (existsKanzlerType(typeName)) {
-           throw new IllegalArgumentException("Type already exists!");
+           return kanzlerTypeMap.get(typeName);
        }
        KanzlerType result = new KanzlerType(typeName);
        kanzlerTypeMap.put(typeName, result);
