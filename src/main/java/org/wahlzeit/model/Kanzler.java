@@ -18,6 +18,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/**=======================================================================================================================
+ * ||                                              Comments for adap-cw13                                               ||
+ * =======================================================================================================================
+ *  Sequence of method calls that lead to the new object                                                                *
+ *      - KanzlerManager accessed via createKanzler createKanzler (KanzlerType type, String name, int yearOfBirth,      *
+ *                                      int yearOfDeath, int yearEnteringOffice, int yearLeavingOffice, String party)   *
+ *                                                                                                                      *
+ *      - In createKanzler, Kanzler is created via Kanzler result = new Kanzler(type, name, yearOfBirth, yearOfDeath,   *
+ *                                      yearEnteringOffice, yearLeavingOffice, party)                                   *
+ *                                                                                                                      *
+ *      - New object is returned                                                                                        *
+ * _______________________________________________________________________________________________________________________
+ * Object creation six-tuple                                                                                            *
+ *      1. Delegation of object creation                                                                                *
+ *         - by delegating to a seperate-object; KanzlerManager creates Kanzler objects                                 *
+ *      2. Selection of concrete class                                                                                  *
+ *         - On-the-spot; it is hard-coded to return a new Kanzler                                                      *
+ *      3. Configuration of class mapping                                                                               *
+ *         - N/A here                                                                                                   *
+ *      4. Instantiation of concrete class                                                                              *
+ *         - In-code; constructor is called directly via new                                                            *
+ *      5. Initialization of new Object                                                                                 *
+ *         - By-fixed-signature; field assignment fixed                                                                 *
+ *      6. Building of object structure                                                                                 *
+ *         - N/A                                                                                                    *
+ * =======================================================================================================================
+ */
+
 package org.wahlzeit.model;
 
 import org.wahlzeit.services.DataObject;

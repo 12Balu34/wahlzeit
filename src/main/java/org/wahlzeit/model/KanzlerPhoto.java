@@ -18,6 +18,38 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/**=======================================================================================================================
+ * ||                                              Comments for adap-cw13                                               ||
+ * =======================================================================================================================
+ *  Sequence of method calls that lead to the new object                                                                *
+ *      - a KanzlerPhotoFactory and KanzlerPhotoManager is instantiated via startUp(String rootDir) in ModelMain        *
+ *        (via PhotoManager.getInstance().init() and PhotoFactory.getInstance() )                                       *
+ *      - doHandlePost (UserSession us, Map args) in UploadPhotoFormHandler accesses the creation method in             *
+ *        PhotoManager via Photo photo = pm.createPhoto(fileName, uploadedImage);                                       *                               *
+ *      - createPhoto(String filename, Image uploadedImage) is inherited from PhotoManager                              *
+ *      - createPhoto calls the PhotoUtil via PhotoUtil.createPhoto(filename, id, uploadedImage)                        *                                                                                                                 *
+ *      - there, the KanzlerPhoto is created via Photo result = PhotoFactory.getInstance().createPhoto(id)              *
+ *      - as the PhotoFactory instance is a KanzlerPhotoFactory object, the createPhoto (PhotoId id)                    *
+ *        KanzlerPhotoFactory is called                                                                                 *
+ *      - this creates the KanzlerPhoto via the constructor new KanzlerPhoto(id)                                        *
+ *      - the constructor calls the constructor of the super-class via super(myId)                                      *
+ *      - the constructor of the super-class sets the id and increments the writeCount inherited from DataObject        *
+ * ________________________________________________________________________________________________________________
+ * Object creation six-tuple                                                                                            *
+ *      1. Delegation of object creation                                                                                *
+ *         - separate-object; created via KanzlerPhotoManager and -Factory                                              *
+ *      2. Selection of concrete class                                                                                  *
+ *         - By-subclassing; KanzlerPhotoFactory is subtype of PhotoFactory                                             *
+ *      3. Configuration of class mapping                                                                               *
+ *         - N/A here                                                                                                   *
+ *      4. Instantiation of concrete class                                                                              *
+ *         - In-code; constructor directly called via new                                                               *
+ *      5. Initialization of new Object                                                                                 *
+ *         - By-key-value-pair; there are constructor which take different sets of arguments                            *
+ *      6. Building of object structure                                                                                 *
+ *         - Default; KanzlerPhoto builds structure itself                                                              *
+ * =======================================================================================================================
+ */
 package org.wahlzeit.model;
 
 
