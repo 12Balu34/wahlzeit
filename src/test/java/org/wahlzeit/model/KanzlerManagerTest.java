@@ -35,16 +35,20 @@ public class KanzlerManagerTest extends KanzlerDomainTest {
         manager.createKanzler(null, "Helmut Schmidt", 1918, 2015, 1974, 1982, "SPD");
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void createKanzlerTwice_shouldThrowException() throws Exception {
-        manager.createKanzler(new KanzlerType("Test"), "Helmut Kohl", 1930, 2017, 1982, 1998, "CDU");
-        manager.createKanzler(new KanzlerType("Test"), "Helmut Kohl", 1930, 2017, 1982, 1998, "CDU");
+    @Test
+    public void createKanzlerTwice_shouldReturnSameObject() throws Exception {
+        Kanzler firstKohl = manager.createKanzler(new KanzlerType("Test"), "Helmut Kohl", 1930, 2017, 1982, 1998, "CDU");
+        Kanzler secondKohl = manager.createKanzler(new KanzlerType("Test"), "Helmut Kohl", 1930, 2017, 1982, 1998, "CDU");
+        //should point to the same object
+        Assert.assertTrue(firstKohl == secondKohl);
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void createKanzlerTypeTwice_shouldThrowException() throws Exception {
-        manager.createKanzlerType("lebend");
-        manager.createKanzlerType("lebend");
+    @Test
+    public void createKanzlerTypeTwice_shouldReturnSameObject() throws Exception {
+        KanzlerType firstType = manager.createKanzlerType("lebend");
+        KanzlerType secondType = manager.createKanzlerType("lebend");
+        //should point to the same object
+        Assert.assertTrue(firstType == secondType);
     }
 
 }
