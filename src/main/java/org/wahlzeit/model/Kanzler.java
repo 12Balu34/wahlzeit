@@ -46,6 +46,14 @@
  * =======================================================================================================================
  */
 
+
+
+//Comments for adap-cw14
+//This class is part of collaborations with the following classes:
+// - KanzlerPhoto
+// - KanzlerType
+// - KanzlerManager
+
 package org.wahlzeit.model;
 
 import org.wahlzeit.services.DataObject;
